@@ -57,8 +57,8 @@
 									<listOptionValue builtIn="false" value="kernel32"/>
 								</option>
 								<option id="gnu.cpp.link.option.paths.762039724" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
-									<listOptionValue builtIn="false" value="&quot;D:\glfw-3.1.1\bin\lib&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;D:\glew-1.13.0\prefix\lib&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${GLFW_DIR}\lib&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${GLEW_DIR}\lib&quot;"/>
 								</option>
 								<option id="gnu.cpp.link.option.flags.1876185031" name="Linker flags" superClass="gnu.cpp.link.option.flags" value="" valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.1380926511" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
@@ -131,8 +131,8 @@
 									<listOptionValue builtIn="false" value="kernel32"/>
 								</option>
 								<option id="gnu.cpp.link.option.paths.1173729789" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
-									<listOptionValue builtIn="false" value="&quot;D:\glfw-3.1.1\bin\lib&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;D:\glew-1.13.0\prefix\lib&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${GLFW_DIR}\lib&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${GLEW_DIR}\lib&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.1691902253" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
