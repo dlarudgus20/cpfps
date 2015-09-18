@@ -23,25 +23,37 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /**
- * @file pch.h
- * @date 2015. 9. 17.
+ * @file Shader.h
+ * @date 2015. 9. 18.
  * @author dlarudgus20
  * @copyright The BSD (2-Clause) License
  */
 
-#ifndef PCH_H_
-#define PCH_H_
+#ifndef SHADER_H_
+#define SHADER_H_
 
-#define GLEW_STATIC
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
+class Shader
+{
+private:
+	GLuint m_vertexShader, m_fragmentShader;
+	GLuint m_shaderProgram;
 
-#include <iostream>
-#include <fstream>
-#include <algorithm>
-#include <iterator>
-#include <string>
-#include <exception>
-#include <stdexcept>
+public:
+	Shader();
+	~Shader();
 
-#endif /* PCH_H_ */
+	void compile(const char *vertex, const char *fragment);
+
+	class CompileError : public std::runtime_error
+	{
+		friend Shader;
+	private:
+		std::string m_msg;
+		explicit CompileError(const std::string &msg);
+	};
+
+private:
+	static GLuint loadFile(const char *filename, GLuint kind);
+};
+
+#endif /* SHADER_H_ */

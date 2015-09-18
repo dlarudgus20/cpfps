@@ -61,7 +61,7 @@ bool MainWnd::create()
 	m_wnd = glfwCreateWindow(MAINWND_WIDTH, MAINWND_HEIGHT, "pfps", nullptr, nullptr);
 	if (m_wnd != nullptr)
 	{
-		glViewport(0, 0, MAINWND_WIDTH, MAINWND_HEIGHT);
+		glViewport(0, 0, MAINWND_WIDTH, MAINWND_HEIGHT); // TODO
 		glfwMakeContextCurrent(m_wnd);
 
 		initCallback();
@@ -73,9 +73,42 @@ bool MainWnd::create()
 	}
 }
 
+GLuint vao, vbo;
+void MainWnd::initialize()
+{
+	glViewport(0, 0, MAINWND_WIDTH, MAINWND_HEIGHT); // TODO
+
+	try
+	{
+		m_shader.compile("vertex.vs", "fragment.fs");
+	}
+	catch (Shader::CompileError &e)
+	{
+		std::cerr << "Shader::CompileError : " << e.what() << std::endl;
+	}
+
+	GLfloat vertices[] = {
+		-0.5f, -0.5f, 0.0f,
+		0.5f, -0.5f, 0.0f,
+		0.0f, 0.5f, 0.0f
+	};
+
+	glGenVertexArrays(1, &vao);
+	glGenBuffers(1, &vbo);
+
+	glBindVertexArray(vao);
+	{
+		glBindBuffer(GL_ARRAY_BUFFER, vbo);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (GLvoid *)0);
+		glEnableVertexAttribArray(0);
+	}
+	glBindVertexArray(0);
+}
+
 void MainWnd::destroy()
 {
-
+	glfwSetWindowShouldClose(m_wnd, GL_TRUE);
 }
 
 void MainWnd::loop()
@@ -93,12 +126,19 @@ void MainWnd::initCallback()
 	glfwSetFramebufferSizeCallback(m_wnd, [] (GLFWwindow *, int width, int height) {
 		MainWnd::getInstance().onFrameBufferSize(width, height);
 	});
+	glfwSetWindowCloseCallback(m_wnd, [](GLFWwindow *) {
+		MainWnd::getInstance().onWindowClose();
+	});
 }
 
 void MainWnd::render()
 {
 	glClearColor(0.f, 0.f, 0.f, 0.f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glBindVertexArray(vao);
+	glDrawArrays(GL_TRIANGLES, 0, 3);
+	glBindVertexArray(0);
 }
 
 void MainWnd::onFrameBufferSize(int width, int height)
@@ -106,3 +146,10 @@ void MainWnd::onFrameBufferSize(int width, int height)
 	glViewport(0, 0, width, height);
 }
 
+void MainWnd::onWindowClose()
+{
+	// ShouldClose is set GL_TRUE on destroy()
+	glfwSetWindowShouldClose(m_wnd, GL_FALSE);
+
+	destroy();
+}

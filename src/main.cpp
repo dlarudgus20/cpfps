@@ -55,8 +55,8 @@ int main()
 		{
 			if (glewInit() == GLEW_OK)
 			{
+				wnd.initialize();
 				wnd.loop();
-				wnd.destroy();
 				ret = 0;
 			}
 			else

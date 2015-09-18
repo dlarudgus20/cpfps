@@ -32,6 +32,8 @@
 #ifndef MAINWND_H_
 #define MAINWND_H_
 
+#include "Shader.h"
+
 class MainWnd final
 {
 public:
@@ -40,11 +42,14 @@ public:
 private:
 	GLFWwindow *m_wnd;
 
+	Shader m_shader;
+
 	MainWnd();
 	~MainWnd();
 
 public:
 	bool create();
+	void initialize();
 	void destroy();
 
 	void loop();
@@ -54,6 +59,7 @@ private:
 	void render();
 
 	void onFrameBufferSize(int width, int height);
+	void onWindowClose();
 };
 
 #endif /* MAINWND_H_ */

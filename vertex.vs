@@ -23,25 +23,17 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /**
- * @file pch.h
- * @date 2015. 9. 17.
+ * @file vertex.vs
+ * @date 2015. 9. 18.
  * @author dlarudgus20
  * @copyright The BSD (2-Clause) License
  */
 
-#ifndef PCH_H_
-#define PCH_H_
+#version 330 core
 
-#define GLEW_STATIC
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
+layout(location = 0) in vec3 position;
 
-#include <iostream>
-#include <fstream>
-#include <algorithm>
-#include <iterator>
-#include <string>
-#include <exception>
-#include <stdexcept>
-
-#endif /* PCH_H_ */
+void main()
+{
+	gl_Position = vec4(position.x, position.y, position.z, 1.0);
+}
