@@ -45,15 +45,25 @@ public:
 	void compile(const char *vertex, const char *fragment);
 	void use();
 
+	void setUniform(const char *var, const glm::vec4 &vec4);
+
 	class CompileError : public std::runtime_error
 	{
-		friend Shader;
-	private:
-		std::string m_msg;
-		explicit CompileError(const std::string &msg);
+	public:
+		explicit CompileError(const std::string &msg)
+			: std::runtime_error(msg) { }
+	};
+
+	class UniformError : public std::runtime_error
+	{
+	public:
+		explicit UniformError(const std::string &msg)
+			: std::runtime_error(msg) { }
 	};
 
 private:
+	GLint findUniform(const char *var);
+
 	static GLuint loadFile(const char *filename, GLuint kind);
 };
 

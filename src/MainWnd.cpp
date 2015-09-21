@@ -100,7 +100,9 @@ void MainWnd::initCallback()
 GLuint vao, vbo, ebo;
 bool MainWnd::initialize()
 {
-	glViewport(0, 0, MAINWND_WIDTH, MAINWND_HEIGHT);
+	int width, height;
+	glfwGetFramebufferSize(m_wnd, &width, &height);
+	glViewport(0, 0, static_cast<GLsizei>(width), static_cast<GLsizei>(height));
 
 	try
 	{
@@ -149,6 +151,10 @@ void MainWnd::render()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	m_shader.use();
+
+	GLfloat green = sin(glfwGetTime()) / 2 + 0.5f;
+	m_shader.setUniform("ourColor", glm::vec4(0.0f, green, 0.0f, 1.0f));
+
 	glBindVertexArray(vao);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);

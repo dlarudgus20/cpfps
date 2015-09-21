@@ -64,6 +64,19 @@ void Shader::use()
 	glUseProgram(m_shaderProgram);
 }
 
+void Shader::setUniform(const char *var, const glm::vec4 &vec4)
+{
+	glUniform4fv(findUniform(var), 1, glm::value_ptr(vec4));
+}
+
+GLint Shader::findUniform(const char *var)
+{
+	GLint loc = glGetUniformLocation(m_shaderProgram, var);
+	if (loc == -1)
+		throw UniformError("cannot find '" + std::string(var) + "' uniform variable.");
+	return loc;
+}
+
 GLuint Shader::loadFile(const char *filename, GLuint shaderType)
 {
 	try
@@ -105,9 +118,4 @@ GLuint Shader::loadFile(const char *filename, GLuint shaderType)
 		throw CompileError(
 			"[" + std::string(filename) + "] : " + e.what());
 	}
-}
-
-Shader::CompileError::CompileError(const std::string &msg)
-	: std::runtime_error(msg.c_str())
-{
 }
