@@ -61,7 +61,6 @@ bool MainWnd::create()
 	m_wnd = glfwCreateWindow(MAINWND_WIDTH, MAINWND_HEIGHT, "pfps", nullptr, nullptr);
 	if (m_wnd != nullptr)
 	{
-		glViewport(0, 0, MAINWND_WIDTH, MAINWND_HEIGHT); // TODO
 		glfwMakeContextCurrent(m_wnd);
 
 		initCallback();
@@ -71,39 +70,6 @@ bool MainWnd::create()
 	{
 		return false;
 	}
-}
-
-GLuint vao, vbo;
-void MainWnd::initialize()
-{
-	glViewport(0, 0, MAINWND_WIDTH, MAINWND_HEIGHT); // TODO
-
-	try
-	{
-		m_shader.compile("vertex.vs", "fragment.fs");
-	}
-	catch (Shader::CompileError &e)
-	{
-		std::cerr << "Shader::CompileError : " << e.what() << std::endl;
-	}
-
-	GLfloat vertices[] = {
-		-0.5f, -0.5f, 0.0f,
-		0.5f, -0.5f, 0.0f,
-		0.0f, 0.5f, 0.0f
-	};
-
-	glGenVertexArrays(1, &vao);
-	glGenBuffers(1, &vbo);
-
-	glBindVertexArray(vao);
-	{
-		glBindBuffer(GL_ARRAY_BUFFER, vbo);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (GLvoid *)0);
-		glEnableVertexAttribArray(0);
-	}
-	glBindVertexArray(0);
 }
 
 void MainWnd::destroy()
@@ -131,13 +97,60 @@ void MainWnd::initCallback()
 	});
 }
 
-void MainWnd::render()
+GLuint vao, vbo, ebo;
+bool MainWnd::initialize()
 {
-	glClearColor(0.f, 0.f, 0.f, 0.f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glViewport(0, 0, MAINWND_WIDTH, MAINWND_HEIGHT);
+
+	try
+	{
+		m_shader.compile("src/vertex.vs", "src/fragment.fs");
+	}
+	catch (Shader::CompileError &e)
+	{
+		std::cerr << "Shader::CompileError : " << e.what() << std::endl;
+		return false;
+	}
+
+	GLfloat vertices[] = {
+		0.5f, 0.5f, 0.0f,
+		0.5f, -0.5f, 0.0f,
+		-0.5f, -0.5f, 0.0f,
+		-0.5f, 0.5f, 0.0f
+	};
+	GLuint indices[] = {
+		0, 1, 3,
+		1, 2, 3
+	};
+
+	glGenVertexArrays(1, &vao);
+	glGenBuffers(1, &vbo);
+	glGenBuffers(1, &ebo);
 
 	glBindVertexArray(vao);
-	glDrawArrays(GL_TRIANGLES, 0, 3);
+	{
+		glBindBuffer(GL_ARRAY_BUFFER, vbo);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (GLvoid *)0);
+		glEnableVertexAttribArray(0);
+	}
+	glBindVertexArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+	return true;
+}
+
+void MainWnd::render()
+{
+	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	m_shader.use();
+	glBindVertexArray(vao);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
 }
 

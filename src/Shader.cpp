@@ -55,10 +55,13 @@ void Shader::compile(const char *vertex, const char *fragment)
 
 	GLint success;
 	glGetProgramiv(m_shaderProgram, GL_LINK_STATUS, &success);
-	if (success)
-	{
-		glUseProgram(m_shaderProgram);
-	}
+	if (!success)
+		throw CompileError("shader link error");
+}
+
+void Shader::use()
+{
+	glUseProgram(m_shaderProgram);
 }
 
 GLuint Shader::loadFile(const char *filename, GLuint shaderType)
@@ -92,7 +95,7 @@ GLuint Shader::loadFile(const char *filename, GLuint shaderType)
 			std::string info(size, '\0');
 			glGetShaderInfoLog(shader, size, nullptr, &info[0]);
 			if (info.size() > 0)
-				info.pop_back();
+				info.erase(info.end() - 1);
 
 			throw CompileError(info);
 		}

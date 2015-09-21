@@ -53,11 +53,19 @@ int main()
 		MainWnd &wnd = MainWnd::getInstance();
 		if (wnd.create())
 		{
+			glewExperimental = GL_TRUE;
 			if (glewInit() == GLEW_OK)
 			{
-				wnd.initialize();
-				wnd.loop();
-				ret = 0;
+				if (wnd.initialize())
+				{
+					wnd.loop();
+					ret = 0;
+				}
+				else
+				{
+					std::cerr << "failed to initialize window\n";
+					ret = -4;
+				}
 			}
 			else
 			{

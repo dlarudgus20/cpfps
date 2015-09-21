@@ -49,9 +49,9 @@ private:
 
 public:
 	bool create();
-	void initialize();
 	void destroy();
 
+	bool initialize();
 	void loop();
 
 private:

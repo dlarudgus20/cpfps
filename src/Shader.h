@@ -43,6 +43,7 @@ public:
 	~Shader();
 
 	void compile(const char *vertex, const char *fragment);
+	void use();
 
 	class CompileError : public std::runtime_error
 	{
