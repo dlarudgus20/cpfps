@@ -32,7 +32,7 @@
 #ifndef SHADER_H_
 #define SHADER_H_
 
-class Shader
+class Shader final
 {
 private:
 	GLuint m_vertexShader, m_fragmentShader;
