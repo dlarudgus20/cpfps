@@ -45,7 +45,8 @@ public:
 	void compile(const char *vertex, const char *fragment);
 	void use();
 
-	void setUniform(const char *var, const glm::vec4 &vec4);
+	void setUniform4f(const char *var, const glm::vec4 &vec4);
+	void setUniform1i(const char *var, GLint i);
 
 	class CompileError : public std::runtime_error
 	{

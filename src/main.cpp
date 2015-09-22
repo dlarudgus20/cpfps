@@ -50,15 +50,16 @@ int main()
 			std::cerr << "GLFW error [" << err << "] :" << desc << std::endl;
 		});
 
-		MainWnd &wnd = MainWnd::getInstance();
-		if (wnd.create())
+		std::unique_ptr<MainWnd> pWnd = MainWnd::createInstance();
+		if (pWnd->create())
 		{
 			glewExperimental = GL_TRUE;
 			if (glewInit() == GLEW_OK)
 			{
-				if (wnd.initialize())
+				if (pWnd->initialize())
 				{
-					wnd.loop();
+					pWnd->loop();
+					pWnd.reset();
 					ret = 0;
 				}
 				else

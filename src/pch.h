@@ -41,6 +41,7 @@
 #include <algorithm>
 #include <iterator>
 #include <string>
+#include <memory>
 #include <exception>
 #include <stdexcept>
 
@@ -49,5 +50,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+
+#include <SOIL.h>
 
 #endif /* PCH_H_ */

@@ -23,7 +23,7 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /**
- * @file fragment.fs
+ * @file vertex.vs
  * @date 2015. 9. 18.
  * @author dlarudgus20
  * @copyright The BSD (2-Clause) License
@@ -31,11 +31,16 @@
 
 #version 330 core
 
-out vec4 color;
+layout(location = 0) in vec3 position;
+layout(location = 1) in vec3 color;
+layout(location = 2) in vec2 texCoord;
 
-uniform vec4 ourColor;
+out vec3 ourColor;
+out vec2 ourTexCoord;
 
 void main()
 {
-	color = ourColor;
+	ourColor = color;
+	ourTexCoord = vec2(texCoord.x, 1 - texCoord.y);
+	gl_Position = vec4(position, 1.0);
 }

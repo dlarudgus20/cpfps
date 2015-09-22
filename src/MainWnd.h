@@ -37,7 +37,7 @@
 class MainWnd final
 {
 public:
-	static MainWnd &getInstance();
+	static std::unique_ptr<MainWnd> createInstance();
 
 private:
 	GLFWwindow *m_wnd;
@@ -45,11 +45,10 @@ private:
 	Shader m_shader;
 
 	MainWnd();
+public:
 	~MainWnd();
 
-public:
 	bool create();
-	void destroy();
 
 	bool initialize();
 	void loop();

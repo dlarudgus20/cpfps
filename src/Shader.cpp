@@ -64,9 +64,14 @@ void Shader::use()
 	glUseProgram(m_shaderProgram);
 }
 
-void Shader::setUniform(const char *var, const glm::vec4 &vec4)
+void Shader::setUniform4f(const char *var, const glm::vec4 &vec4)
 {
 	glUniform4fv(findUniform(var), 1, glm::value_ptr(vec4));
+}
+
+void Shader::setUniform1i(const char *var, GLint i)
+{
+	glUniform1i(findUniform(var), i);
 }
 
 GLint Shader::findUniform(const char *var)
