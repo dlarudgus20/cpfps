@@ -96,7 +96,7 @@ void MainWnd::initCallback()
 
 GLuint vao, vbo;
 GLuint ebo;
-GLuint texture1, texture2;
+GLuint texture;
 bool MainWnd::initialize()
 {
 	int width, height;
@@ -116,8 +116,10 @@ bool MainWnd::initialize()
 	}
 	m_shader.use();
 
-	glGenTextures(1, &texture1);
-	glBindTexture(GL_TEXTURE_2D, texture1);
+	m_tetra.initialize();
+
+	glGenTextures(1, &texture);
+	glBindTexture(GL_TEXTURE_2D, texture);
 	{
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -139,34 +141,11 @@ bool MainWnd::initialize()
 	}
 	glBindTexture(GL_TEXTURE_2D, 0);
 
-	glGenTextures(1, &texture2);
-	glBindTexture(GL_TEXTURE_2D, texture2);
-	{
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-		int texWidth, texHeight;
-		unsigned char *image = SOIL_load_image("res/awesomeface.png", &texWidth, &texHeight, nullptr, SOIL_LOAD_RGB);
-		if (image == nullptr)
-		{
-			std::cerr << "failed to load texture\n";
-			return false;
-		}
-
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texWidth, texHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
-		glGenerateMipmap(GL_TEXTURE_2D);
-
-		SOIL_free_image_data(image);
-	}
-	glBindTexture(GL_TEXTURE_2D, 0);
-
 	GLfloat vertices[] = {
-		0.5f, 0.5f, 0.0f,	1.0f, 0.0f, 0.0f,	1.0f, 1.0f,
-		0.5f, -0.5f, 0.0f,	0.0f, 1.0f, 0.0f,	1.0f, 0.0f,
-		-0.5f, -0.5f, 0.0f,	0.0f, 0.0f, 1.0f,	0.0f, 0.0f,
-		-0.5f, 0.5f, 0.0f,	1.0f, 1.0f, 0.0f,	0.0f, 1.0f
+		0.5f, 0.5f, 0.0f,	0.0f, 0.0f, 1.0f,	1.0f, 0.0f, 0.0f,	1.0f, 1.0f,
+		0.5f, -0.5f, 0.0f,	0.0f, 0.0f, 1.0f,	0.0f, 1.0f, 0.0f,	1.0f, 0.0f,
+		-0.5f, -0.5f, 0.0f,	0.0f, 0.0f, 1.0f,	0.0f, 0.0f, 1.0f,	0.0f, 0.0f,
+		-0.5f, 0.5f, 0.0f,	0.0f, 0.0f, 1.0f,	1.0f, 1.0f, 0.0f,	0.0f, 1.0f
 	};
 	GLuint indices[] = {
 		0, 1, 3,
@@ -185,12 +164,14 @@ bool MainWnd::initialize()
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid *)0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(GLfloat), (GLvoid *)0);
 		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid *)(3 * sizeof(GLfloat)));
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(GLfloat), (GLvoid *)(3 * sizeof(GLfloat)));
 		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid *)(6 * sizeof(GLfloat)));
+		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(GLfloat), (GLvoid *)(6 * sizeof(GLfloat)));
 		glEnableVertexAttribArray(2);
+		glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, 11 * sizeof(GLfloat), (GLvoid *)(9 * sizeof(GLfloat)));
+		glEnableVertexAttribArray(3);
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
@@ -206,17 +187,15 @@ void MainWnd::render()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture1);
-	m_shader.setUniform1i("ourTexture1", 0);
-
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, texture2);
-	m_shader.setUniform1i("ourTexture2", 1);
+	glBindTexture(GL_TEXTURE_2D, texture);
+	m_shader.setUniform1i("ourTexture", 0);
 
 	glBindVertexArray(vao);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	//glDrawArrays(GL_TRIANGLES, 0, 3);
 	glBindVertexArray(0);
+
+	m_tetra.draw(m_shader);
 }
 
 void MainWnd::onFrameBufferSize(int width, int height)

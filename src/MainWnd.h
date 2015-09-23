@@ -33,6 +33,7 @@
 #define MAINWND_H_
 
 #include "Shader.h"
+#include "Tetrahedron.h"
 
 class MainWnd final
 {
@@ -43,6 +44,8 @@ private:
 	GLFWwindow *m_wnd;
 
 	Shader m_shader;
+
+	Tetrahedron m_tetra;
 
 	MainWnd();
 public:

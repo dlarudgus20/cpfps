@@ -31,6 +31,7 @@
 
 #include "pch.h"
 #include "Tetrahedron.h"
+#include "Shader.h"
 
 namespace
 {
@@ -47,7 +48,12 @@ namespace
 		-0.87f, -0.5f, 0.0f,	-0.72f, 0.42f, -0.56f,	0.0f, 1.0f, 0.0f,	0.0f, 0.0f,
 		0.0f, 1.0f, 0.0f,		-0.72f, 0.42f, -0.56f,	1.0f, 0.0f, 0.0f,	1.0f, 0.0f,
 		0.0f, 0.0f, -0.75f,		-0.72f, 0.42f, -0.56f,	1.0f, 1.0f, 1.0f,	0.5f, 1.0f,
+
+		0.0f, 0.0f, -0.75f,		0.0f, -0.83f, -0.55f,	1.0f, 1.0f, 1.0f,	0.0f, 0.0f,
+		0.87f, -0.5f, 0.0f,		0.0f, -0.83f, -0.55f,	0.0f, 0.0f, 1.0f,	1.0f, 0.0f,
+		-0.87f, -0.5f, 0.0f,	0.0f, -0.83f, -0.55f,	0.0f, 1.0f, 0.0f,	0.5f, 1.0f,
 	};
+	GLsizei stretch = 11 * sizeof(GLfloat);
 }
 
 Tetrahedron::Tetrahedron()
@@ -94,13 +100,13 @@ void Tetrahedron::initialize()
 		glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(GLfloat), (GLfloat)0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stretch, (GLvoid *)0);
 		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(GLfloat), (GLfloat)(3 * sizeof(GLfloat)));
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stretch, (GLvoid *)(3 * sizeof(GLfloat)));
 		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(GLfloat), (GLfloat)(6 * sizeof(GLfloat)));
+		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, stretch, (GLvoid *)(6 * sizeof(GLfloat)));
 		glEnableVertexAttribArray(2);
-		glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, 11 * sizeof(GLfloat), (GLfloat)(9 * sizeof(GLfloat)));
+		glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, stretch, (GLvoid *)(9 * sizeof(GLfloat)));
 		glEnableVertexAttribArray(3);
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -108,13 +114,13 @@ void Tetrahedron::initialize()
 	glBindVertexArray(0);
 }
 
-void Tetrahedron::draw()
+void Tetrahedron::draw(Shader &shader)
 {
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, m_texture);
-	//m_shader.setUniform1i("ourTexture", 0); TODOTODO
+	shader.setUniform1i("ourTexture", 0);
 
-	glBindVertexArray(vao);
-	glDrawArrays(GL_TRIANGLES, 0, 9);
+	glBindVertexArray(m_vao);
+	glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices) / stretch);
 	glBindVertexArray(0);
 }

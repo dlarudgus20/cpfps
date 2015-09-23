@@ -32,6 +32,8 @@
 #ifndef TETRAHEDRON_H_
 #define TETRAHEDRON_H_
 
+class Shader;
+
 class Tetrahedron final
 {
 private:
@@ -43,7 +45,7 @@ public:
 	~Tetrahedron();
 
 	void initialize();
-	void draw();
+	void draw(Shader &shader);
 };
 
 #endif /* TETRAHEDRON_H_ */
