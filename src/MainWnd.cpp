@@ -99,6 +99,8 @@ bool MainWnd::initialize()
 {
 	m_lastFrameTime = glfwGetTime();
 
+	glfwSetInputMode(m_wnd, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
 	int width, height;
 	glfwGetFramebufferSize(m_wnd, &width, &height);
 
@@ -186,6 +188,28 @@ void MainWnd::calcProjection(int width, int height)
 		aspect = (float)width / height;
 
 	m_projection = glm::perspective(glm::radians(45.0f), aspect, 0.1f, 100.0f);
+}
+
+void MainWnd::onMouseCursorPos(double xpos, double ypos)
+{
+	if (m_isFirstMouse)
+	{
+		m_prevMouseX = (float)xpos;
+		m_prevMouseY = (float)ypos;
+		m_isFirstMouse = false;
+	}
+	else
+	{
+		int width, height;
+		glfwGetFramebufferSize(m_wnd, &width, &height);
+		if (!(width == 0 || height == 0))
+		{
+			const float sensitivity = 0.05f;
+
+			float d_yaw = ((float)xpos - m_prevMouseX) / width;
+			float d_pitch = ((float)ypos - m_prevMouseY) / height;
+		}
+	}
 }
 
 void MainWnd::onFrameBufferSize(int width, int height)

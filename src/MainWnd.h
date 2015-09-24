@@ -52,6 +52,9 @@ private:
 
 	float m_lastFrameTime;
 
+	bool m_isFirstMouse = true;
+	float m_prevMouseX, m_prevMouseY;
+
 	Tetrahedron m_tetra;
 	Container m_container;
 
@@ -71,6 +74,7 @@ private:
 
 	void calcProjection(int width, int height);
 
+	void onMouseCursorPos(double xpos, double ypos);
 	void onFrameBufferSize(int width, int height);
 	void onWindowClose();
 };
