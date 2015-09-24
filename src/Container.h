@@ -38,7 +38,7 @@ class Container
 {
 private:
 	GLuint m_vbo, m_vao;
-	GLuint m_texture0, m_texture1;
+	GLuint m_texture;
 
 public:
 	Container();

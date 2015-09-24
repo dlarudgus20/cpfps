@@ -114,9 +114,10 @@
 									<listOptionValue builtIn="false" value="&quot;${GLM_DIR}\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${SOIL_DIR}\include&quot;"/>
 								</option>
-								<option id="gnu.cpp.compiler.option.preprocessor.def.2018429828" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
+								<option id="gnu.cpp.compiler.option.preprocessor.def.2018429828" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="NDEBUG"/>
 								</option>
+								<option id="gnu.cpp.compiler.option.optimization.flags.1737954397" superClass="gnu.cpp.compiler.option.optimization.flags" value="-flto" valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.681592074" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.compiler.mingw.exe.release.519146192" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.mingw.exe.release">
@@ -147,6 +148,7 @@
 									<listOptionValue builtIn="false" value="&quot;${GLEW_DIR}\lib&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${SOIL_DIR}\lib&quot;"/>
 								</option>
+								<option id="gnu.cpp.link.option.flags.472411851" superClass="gnu.cpp.link.option.flags" value="-flto" valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.1691902253" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>

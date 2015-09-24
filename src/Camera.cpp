@@ -23,22 +23,36 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /**
- * @file fragment.fs
- * @date 2015. 9. 18.
+ * @file Camera.cpp
+ * @date 2015. 9. 24.
  * @author dlarudgus20
  * @copyright The BSD (2-Clause) License
  */
 
-#version 330 core
+#include "pch.h"
+#include "Camera.h"
 
-in vec3 ourColor;
-in vec2 ourTexCoord;
-
-out vec4 color;
-
-uniform sampler2D ourTexture;
-
-void main()
+Camera::Camera()
+	: m_position(0, 0, 3), m_distance(3)
 {
-	color = texture(ourTexture, ourTexCoord) * vec4(ourColor, 1.0f);
+	calculate();
+}
+
+Camera::~Camera()
+{
+	// TODO Auto-generated destructor stub
+}
+
+const glm::mat4 &Camera::getMatrix() const
+{
+	return m_matrix;
+}
+
+void Camera::calculate()
+{
+	m_front = glm::vec3(0, 0, -1) * m_distance;
+	m_right = glm::normalize(glm::cross(m_front, glm::vec3(0, 1, 0)));
+	m_up = glm::cross(m_right, m_front);
+
+	m_matrix = glm::lookAt(m_position, m_position + m_front, m_up);
 }

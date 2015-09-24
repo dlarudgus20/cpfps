@@ -118,8 +118,7 @@ void Tetrahedron::draw(Shader &shader)
 {
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, m_texture);
-	shader.setUniform1i("ourTexture0", 0);
-	shader.setUniform1i("ourTexture1", 0);
+	shader.setUniform1i("ourTexture", 0);
 
 	glBindVertexArray(m_vao);
 	glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices) / strides);

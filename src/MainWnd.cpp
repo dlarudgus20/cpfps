@@ -98,7 +98,9 @@ bool MainWnd::initialize()
 {
 	int width, height;
 	glfwGetFramebufferSize(m_wnd, &width, &height);
+
 	glViewport(0, 0, static_cast<GLsizei>(width), static_cast<GLsizei>(height));
+	calcProjection(width, height);
 
 	glEnable(GL_DEPTH_TEST);
 
@@ -137,18 +139,7 @@ void MainWnd::render()
 		{-1.3f,  1.0f, -1.5f },
 	};
 
-	int width, height;
-	glfwGetFramebufferSize(m_wnd, &width, &height);
-	float aspect;
-	// 최소화 상태일땐 width == height == 0임.
-	if (width == 0 || height == 0)
-		aspect = 1.0f;
-	else
-		aspect = (float)width / height;
-	glm::mat4 projection = glm::perspective(glm::radians(45.0f), aspect, 0.1f, 100.0f);
-
-	glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-	glm::mat4 pvMatrix = projection * view;
+	glm::mat4 pvMatrix = m_projection * m_camera.getMatrix();
 
 	for (std::size_t i = 0; i < sizeof(cubePos) / sizeof(cubePos[0]); ++i)
 	{
@@ -163,9 +154,27 @@ void MainWnd::render()
 	}
 }
 
+void MainWnd::calcProjection(int width, int height)
+{
+	float aspect;
+
+	// 최소화 상태일땐 width == height == 0임.
+	if (width == 0 || height == 0)
+		aspect = 1.0f;
+	else
+		aspect = (float)width / height;
+
+	m_projection = glm::perspective(glm::radians(45.0f), aspect, 0.1f, 100.0f);
+}
+
 void MainWnd::onFrameBufferSize(int width, int height)
 {
-	glViewport(0, 0, width, height);
+	// 최소화 상태일땐 width == height == 0임.
+	if (!(width == 0 || height == 0))
+	{
+		glViewport(0, 0, width, height);
+		calcProjection(width, height);
+	}
 }
 
 void MainWnd::onWindowClose()

@@ -90,14 +90,13 @@ Container::~Container()
 {
 	glDeleteVertexArrays(1, &m_vao);
 	glDeleteBuffers(1, &m_vbo);
-	glDeleteTextures(1, &m_texture0);
-	glDeleteTextures(1, &m_texture1);
+	glDeleteTextures(1, &m_texture);
 }
 
 void Container::initialize()
 {
-	glGenTextures(1, &m_texture0);
-	glBindTexture(GL_TEXTURE_2D, m_texture0);
+	glGenTextures(1, &m_texture);
+	glBindTexture(GL_TEXTURE_2D, m_texture);
 	{
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -106,28 +105,6 @@ void Container::initialize()
 
 		int texWidth, texHeight;
 		unsigned char *image = SOIL_load_image("res/container.jpg", &texWidth, &texHeight, nullptr, SOIL_LOAD_RGB);
-		if (image == nullptr)
-		{
-			throw "failed to load texture\n";
-		}
-
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texWidth, texHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
-		glGenerateMipmap(GL_TEXTURE_2D);
-
-		SOIL_free_image_data(image);
-	}
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	glGenTextures(1, &m_texture1);
-	glBindTexture(GL_TEXTURE_2D, m_texture1);
-	{
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-		int texWidth, texHeight;
-		unsigned char *image = SOIL_load_image("res/awesomeface.png", &texWidth, &texHeight, nullptr, SOIL_LOAD_RGB);
 		if (image == nullptr)
 		{
 			throw "failed to load texture\n";
@@ -165,12 +142,8 @@ void Container::initialize()
 void Container::draw(Shader &shader)
 {
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, m_texture0);
-	shader.setUniform1i("ourTexture0", 0);
-
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, m_texture1);
-	shader.setUniform1i("ourTexture1", 1);
+	glBindTexture(GL_TEXTURE_2D, m_texture);
+	shader.setUniform1i("ourTexture", 0);
 
 	glBindVertexArray(m_vao);
 	glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices) / strides);

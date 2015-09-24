@@ -23,22 +23,33 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /**
- * @file fragment.fs
- * @date 2015. 9. 18.
+ * @file Camera.h
+ * @date 2015. 9. 24.
  * @author dlarudgus20
  * @copyright The BSD (2-Clause) License
  */
 
-#version 330 core
+#ifndef CAMERA_H_
+#define CAMERA_H_
 
-in vec3 ourColor;
-in vec2 ourTexCoord;
-
-out vec4 color;
-
-uniform sampler2D ourTexture;
-
-void main()
+class Camera
 {
-	color = texture(ourTexture, ourTexCoord) * vec4(ourColor, 1.0f);
-}
+private:
+	glm::vec3 m_position;
+	float m_distance;
+
+	glm::vec3 m_front, m_right, m_up;
+
+	glm::mat4 m_matrix;
+
+public:
+	Camera();
+	~Camera();
+
+	const glm::mat4 &getMatrix() const;
+
+private:
+	void calculate();
+};
+
+#endif /* CAMERA_H_ */

@@ -35,6 +35,7 @@
 #include "Shader.h"
 #include "Tetrahedron.h"
 #include "Container.h"
+#include "Camera.h"
 
 class MainWnd final
 {
@@ -45,6 +46,9 @@ private:
 	GLFWwindow *m_wnd;
 
 	Shader m_shader;
+
+	glm::mat4 m_projection;
+	Camera m_camera;
 
 	Tetrahedron m_tetra;
 	Container m_container;
@@ -61,6 +65,8 @@ public:
 private:
 	void initCallback();
 	void render();
+
+	void calcProjection(int width, int height);
 
 	void onFrameBufferSize(int width, int height);
 	void onWindowClose();
