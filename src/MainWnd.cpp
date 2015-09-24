@@ -78,6 +78,7 @@ void MainWnd::loop()
 	{
 		glfwPollEvents();
 		render();
+		idle();
 		glfwSwapBuffers(m_wnd);
 	}
 }
@@ -96,6 +97,8 @@ void MainWnd::initCallback()
 
 bool MainWnd::initialize()
 {
+	m_lastFrameTime = glfwGetTime();
+
 	int width, height;
 	glfwGetFramebufferSize(m_wnd, &width, &height);
 
@@ -152,6 +155,24 @@ void MainWnd::render()
 		m_shader.setUniformMatrix4f("ourMatrix", model);
 		m_container.draw(m_shader);
 	}
+}
+
+void MainWnd::idle()
+{
+	float frameTime = glfwGetTime();
+	float deltaTime = frameTime - m_lastFrameTime;
+
+	const float unit = 1.5f;
+
+	int front = 0, right = 0;
+	front += glfwGetKey(m_wnd, GLFW_KEY_W) == GLFW_PRESS ? 1 : 0;
+	front += glfwGetKey(m_wnd, GLFW_KEY_S) == GLFW_PRESS ? -1 : 0;
+	right += glfwGetKey(m_wnd, GLFW_KEY_D) == GLFW_PRESS ? 1 : 0;
+	right += glfwGetKey(m_wnd, GLFW_KEY_A) == GLFW_PRESS ? -1 : 0;
+
+	m_camera.move(front, right, unit * deltaTime);
+
+	m_lastFrameTime = frameTime;
 }
 
 void MainWnd::calcProjection(int width, int height)

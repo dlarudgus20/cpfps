@@ -48,6 +48,8 @@ public:
 
 	const glm::mat4 &getMatrix() const;
 
+	void move(int front, int right, float unit);
+
 private:
 	void calculate();
 };

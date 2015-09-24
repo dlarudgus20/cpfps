@@ -50,6 +50,8 @@ private:
 	glm::mat4 m_projection;
 	Camera m_camera;
 
+	float m_lastFrameTime;
+
 	Tetrahedron m_tetra;
 	Container m_container;
 
@@ -65,6 +67,7 @@ public:
 private:
 	void initCallback();
 	void render();
+	void idle();
 
 	void calcProjection(int width, int height);
 

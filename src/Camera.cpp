@@ -48,6 +48,13 @@ const glm::mat4 &Camera::getMatrix() const
 	return m_matrix;
 }
 
+void Camera::move(int front, int right, float unit)
+{
+	m_position += front * unit * m_front;
+	m_position += right * unit * m_right;
+	calculate();
+}
+
 void Camera::calculate()
 {
 	m_front = glm::vec3(0, 0, -1) * m_distance;
