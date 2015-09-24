@@ -47,6 +47,7 @@ public:
 
 	void setUniform4f(const char *var, const glm::vec4 &vec4);
 	void setUniform1i(const char *var, GLint i);
+	void setUniformMatrix4f(const char *var, const glm::mat4 &mat);
 
 	class CompileError : public std::runtime_error
 	{

@@ -53,7 +53,7 @@ namespace
 		0.87f, -0.5f, 0.0f,		0.0f, -0.83f, -0.55f,	0.0f, 0.0f, 1.0f,	1.0f, 0.0f,
 		-0.87f, -0.5f, 0.0f,	0.0f, -0.83f, -0.55f,	0.0f, 1.0f, 0.0f,	0.5f, 1.0f,
 	};
-	GLsizei stretch = 11 * sizeof(GLfloat);
+	GLsizei strides = 11 * sizeof(GLfloat);
 }
 
 Tetrahedron::Tetrahedron()
@@ -100,13 +100,13 @@ void Tetrahedron::initialize()
 		glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stretch, (GLvoid *)0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, strides, (GLvoid *)0);
 		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stretch, (GLvoid *)(3 * sizeof(GLfloat)));
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, strides, (GLvoid *)(3 * sizeof(GLfloat)));
 		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, stretch, (GLvoid *)(6 * sizeof(GLfloat)));
+		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, strides, (GLvoid *)(6 * sizeof(GLfloat)));
 		glEnableVertexAttribArray(2);
-		glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, stretch, (GLvoid *)(9 * sizeof(GLfloat)));
+		glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, strides, (GLvoid *)(9 * sizeof(GLfloat)));
 		glEnableVertexAttribArray(3);
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -118,9 +118,10 @@ void Tetrahedron::draw(Shader &shader)
 {
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, m_texture);
-	shader.setUniform1i("ourTexture", 0);
+	shader.setUniform1i("ourTexture0", 0);
+	shader.setUniform1i("ourTexture1", 0);
 
 	glBindVertexArray(m_vao);
-	glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices) / stretch);
+	glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices) / strides);
 	glBindVertexArray(0);
 }

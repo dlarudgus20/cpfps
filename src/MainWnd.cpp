@@ -94,9 +94,6 @@ void MainWnd::initCallback()
 #undef THIZ
 }
 
-GLuint vao, vbo;
-GLuint ebo;
-GLuint texture;
 bool MainWnd::initialize()
 {
 	int width, height;
@@ -117,66 +114,7 @@ bool MainWnd::initialize()
 	m_shader.use();
 
 	m_tetra.initialize();
-
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-	{
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-		int texWidth, texHeight;
-		unsigned char *image = SOIL_load_image("res/container.jpg", &texWidth, &texHeight, nullptr, SOIL_LOAD_RGB);
-		if (image == nullptr)
-		{
-			std::cerr << "failed to load texture\n";
-			return false;
-		}
-
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texWidth, texHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
-		glGenerateMipmap(GL_TEXTURE_2D);
-
-		SOIL_free_image_data(image);
-	}
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	GLfloat vertices[] = {
-		0.5f, 0.5f, 0.0f,	0.0f, 0.0f, 1.0f,	1.0f, 0.0f, 0.0f,	1.0f, 1.0f,
-		0.5f, -0.5f, 0.0f,	0.0f, 0.0f, 1.0f,	0.0f, 1.0f, 0.0f,	1.0f, 0.0f,
-		-0.5f, -0.5f, 0.0f,	0.0f, 0.0f, 1.0f,	0.0f, 0.0f, 1.0f,	0.0f, 0.0f,
-		-0.5f, 0.5f, 0.0f,	0.0f, 0.0f, 1.0f,	1.0f, 1.0f, 0.0f,	0.0f, 1.0f
-	};
-	GLuint indices[] = {
-		0, 1, 3,
-		1, 2, 3
-	};
-
-	glGenVertexArrays(1, &vao);
-	glGenBuffers(1, &vbo);
-	glGenBuffers(1, &ebo);
-
-	glBindVertexArray(vao);
-	{
-		glBindBuffer(GL_ARRAY_BUFFER, vbo);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(GLfloat), (GLvoid *)0);
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(GLfloat), (GLvoid *)(3 * sizeof(GLfloat)));
-		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(GLfloat), (GLvoid *)(6 * sizeof(GLfloat)));
-		glEnableVertexAttribArray(2);
-		glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, 11 * sizeof(GLfloat), (GLvoid *)(9 * sizeof(GLfloat)));
-		glEnableVertexAttribArray(3);
-
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-	}
-	glBindVertexArray(0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	m_container.initialize();
 
 	return true;
 }
@@ -186,16 +124,43 @@ void MainWnd::render()
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture);
-	m_shader.setUniform1i("ourTexture", 0);
+	static glm::vec3 cubePos[] = {
+		{ 0.0f,  0.0f,  0.0f },
+		{ 2.0f,  5.0f, -15.0f },
+		{-1.5f, -2.2f, -2.5f },
+		{-3.8f, -2.0f, -12.3f },
+		{ 2.4f, -0.4f, -3.5f },
+		{-1.7f,  3.0f, -7.5f },
+		{ 1.3f, -2.0f, -2.5f },
+		{ 1.5f,  2.0f, -2.5f },
+		{ 1.5f,  0.2f, -1.5f },
+		{-1.3f,  1.0f, -1.5f },
+	};
 
-	glBindVertexArray(vao);
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-	//glDrawArrays(GL_TRIANGLES, 0, 3);
-	glBindVertexArray(0);
+	int width, height;
+	glfwGetFramebufferSize(m_wnd, &width, &height);
+	float aspect;
+	// 최소화 상태일땐 width == height == 0임.
+	if (width == 0 || height == 0)
+		aspect = 1.0f;
+	else
+		aspect = (float)width / height;
+	glm::mat4 projection = glm::perspective(glm::radians(45.0f), aspect, 0.1f, 100.0f);
 
-	m_tetra.draw(m_shader);
+	glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	glm::mat4 pvMatrix = projection * view;
+
+	for (std::size_t i = 0; i < sizeof(cubePos) / sizeof(cubePos[0]); ++i)
+	{
+		float angle = (float)glm::radians(i * 20.0 + glfwGetTime() * 60.0);
+
+		glm::mat4 model = pvMatrix;
+		model = glm::translate(model, cubePos[i]);
+		model = glm::rotate(model, angle, glm::vec3(1.0f, 0.3f, 0.5f));
+
+		m_shader.setUniformMatrix4f("ourMatrix", model);
+		m_container.draw(m_shader);
+	}
 }
 
 void MainWnd::onFrameBufferSize(int width, int height)

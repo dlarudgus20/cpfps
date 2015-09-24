@@ -39,9 +39,11 @@ layout(location = 3) in vec2 texCoord;
 out vec3 ourColor;
 out vec2 ourTexCoord;
 
+uniform mat4 ourMatrix;
+
 void main()
 {
 	ourColor = color;
 	ourTexCoord = vec2(texCoord.x, 1 - texCoord.y);
-	gl_Position = vec4(position, 1.0);
+	gl_Position = ourMatrix * vec4(position, 1.0f);
 }

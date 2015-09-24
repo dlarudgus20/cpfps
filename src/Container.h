@@ -23,47 +23,29 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /**
- * @file MainWnd.h
- * @date 2015. 9. 17.
+ * @file Container.h
+ * @date 2015. 9. 24.
  * @author dlarudgus20
  * @copyright The BSD (2-Clause) License
  */
 
-#ifndef MAINWND_H_
-#define MAINWND_H_
+#ifndef CONTAINER_H_
+#define CONTAINER_H_
 
-#include "Shader.h"
-#include "Tetrahedron.h"
-#include "Container.h"
+class Shader;
 
-class MainWnd final
+class Container
 {
-public:
-	static std::unique_ptr<MainWnd> createInstance();
-
 private:
-	GLFWwindow *m_wnd;
+	GLuint m_vbo, m_vao;
+	GLuint m_texture0, m_texture1;
 
-	Shader m_shader;
-
-	Tetrahedron m_tetra;
-	Container m_container;
-
-	MainWnd();
 public:
-	~MainWnd();
+	Container();
+	~Container();
 
-	bool create();
-
-	bool initialize();
-	void loop();
-
-private:
-	void initCallback();
-	void render();
-
-	void onFrameBufferSize(int width, int height);
-	void onWindowClose();
+	void initialize();
+	void draw(Shader &shader);
 };
 
-#endif /* MAINWND_H_ */
+#endif /* CONTAINER_H_ */
