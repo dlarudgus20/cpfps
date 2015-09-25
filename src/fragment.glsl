@@ -31,6 +31,22 @@
 
 #version 330 core
 
+struct Material
+{
+	vec3 ambient;
+	vec3 diffuse;
+	vec3 specular;
+	float shininess;
+};
+
+struct Light
+{
+	vec3 position;
+	vec3 ambient;
+	vec3 diffuse;
+	vec3 specular;
+};
+
 in vec3 fragColor;
 in vec2 fragTexCoord;
 in vec3 fragNormal;
@@ -40,30 +56,25 @@ out vec4 color;
 
 uniform sampler2D ourTexture;
 
-uniform vec3 lightPos;
-uniform vec3 lightColor;
+uniform Light light;
+uniform Material material;
 
 uniform mat3 ourtivmMatrix;
 
 void main()
 {
-	float ambientStrength = 0.1f;
-	float diffuseStrength = 1.0f;
-	float specularStrength = 0.5f;
-	float shininess = 32;
-
 	vec3 norm = ourtivmMatrix * normalize(fragNormal);
-	vec3 lightDir = normalize(lightPos - fragPos);
+	vec3 lightDir = normalize(light.position - fragPos);
 
-	vec3 ambient = ambientStrength * lightColor;
+	vec3 ambient = material.ambient * light.ambient;
 
 	float diff = max(dot(norm, lightDir), 0.0f);
-	vec3 diffuse = diffuseStrength * diff * lightColor;
+	vec3 diffuse = diff * material.diffuse * light.diffuse;
 
 	vec3 viewDir = normalize(-fragPos);
 	vec3 reflectDir = reflect(-lightDir, norm);
-	float spec = pow(max(dot(viewDir, reflectDir), 0.0f), shininess);
-	vec3 specular = specularStrength * spec * lightColor;
+	float spec = pow(max(dot(viewDir, reflectDir), 0.0f), material.shininess);
+	vec3 specular = spec * material.specular * light.specular;
 
 	vec3 result = ambient + diffuse + specular;
 

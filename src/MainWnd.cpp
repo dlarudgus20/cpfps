@@ -181,9 +181,13 @@ void MainWnd::render()
 	m_shader.setUniformMatrix4f("ourMatrix", m_projection * vmMatrix);
 	m_shader.setUniformMatrix4f("ourvmMatrix", vmMatrix);
 	m_shader.setUniformMatrix3f("ourtivmMatrix", tivmMatrix);
+	m_shader.setUniform3f("material.ambient", { 1.0f, 0.5f, 0.31f });
+	m_shader.setUniform3f("material.diffuse", { 1.0f, 0.5f, 0.31f });
+	m_shader.setUniform3f("material.specular", { 0.5f, 0.5f, 0.5f });
+	m_shader.setUniform1f("material.shininess", 32.0f);
 	m_container.draw();
 
-	vmMatrix = glm::translate(vmMatrix, m_light.getLightPos());
+	vmMatrix = glm::translate(vmMatrix, m_light.getPosition());
 	vmMatrix = glm::scale(vmMatrix, glm::vec3(0.2f));
 	m_shaderNolight.use();
 	m_shader.setUniformMatrix4f("ourMatrix", m_projection * vmMatrix);

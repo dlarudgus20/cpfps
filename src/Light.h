@@ -35,14 +35,14 @@
 class Light
 {
 private:
-	glm::vec3 m_lightPos;
-	glm::vec3 m_lightColor;
+	glm::vec3 m_position;
+	glm::vec3 m_ambient, m_diffuse, m_specular;
 
 public:
 	Light();
 	~Light();
 
-	const glm::vec3 &getLightPos() const;
+	const glm::vec3 &getPosition() const;
 
 	void initialize();
 

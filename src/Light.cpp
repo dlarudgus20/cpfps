@@ -41,21 +41,25 @@ Light::~Light()
 {
 }
 
-const glm::vec3 &Light::getLightPos() const
+const glm::vec3 &Light::getPosition() const
 {
-	return m_lightPos;
+	return m_position;
 }
 
 void Light::initialize()
 {
-	m_lightPos = glm::vec3(2.0f, 1.0f, 1.2f);
-	m_lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
+	m_position = glm::vec3(2.0f, 1.0f, 1.2f);
+	m_ambient = glm::vec3(0.1f, 0.1f, 0.1f);
+	m_diffuse = glm::vec3(1.0f, 1.0f, 1.0f);
+	m_specular = glm::vec3(1.0f, 1.0f, 1.0f);
 }
 
 void Light::applyToCurrentShader(const glm::mat4 &viewMatrix)
 {
-	glm::vec3 pos = glm::vec3(viewMatrix * glm::vec4(m_lightPos, 1.0f));
+	glm::vec3 pos = glm::vec3(viewMatrix * glm::vec4(m_position, 1.0f));
 	Shader *pShader = Shader::getCurrentShader();
-	pShader->setUniform3f("lightPos", pos);
-	pShader->setUniform3f("lightColor", m_lightColor);
+	pShader->setUniform3f("light.position", pos);
+	pShader->setUniform3f("light.ambient", m_ambient);
+	pShader->setUniform3f("light.diffuse", m_diffuse);
+	pShader->setUniform3f("light.specular", m_specular);
 }
