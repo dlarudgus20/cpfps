@@ -33,7 +33,7 @@
 #include "Camera.h"
 
 Camera::Camera()
-	: m_position(0, 0, 3), m_distance(3)
+	: m_position(0, 0, 3), m_distance(3), m_pitch(0.0f), m_yaw(0.0f)
 {
 	calculate();
 }
@@ -48,16 +48,63 @@ const glm::mat4 &Camera::getMatrix() const
 	return m_matrix;
 }
 
+float Camera::getPitch() const
+{
+	return m_pitch;
+}
+
+float Camera::getYaw() const
+{
+	return m_yaw;
+}
+
+void Camera::setPitchYaw(float pitch, float yaw)
+{
+	m_pitch = pitch;
+	m_yaw = yaw;
+
+	// std::abs(pitch) must not be bigger than 90
+	if (pitch > 89.99f)
+		pitch = 89.99f;
+	else if (pitch < -89.99f)
+		pitch = -89.99f;
+
+	calculate();
+}
+
 void Camera::move(int front, int right, float unit)
 {
+	/*
 	m_position += front * unit * m_front;
 	m_position += right * unit * m_right;
+	//*/
+	///*
+	float f = front * unit;
+	float r = right * unit;
+	float sin_yaw = std::sin(m_yaw - glm::pi<float>() / 2);
+	float cos_yaw = std::cos(m_yaw - glm::pi<float>() / 2);
+	m_position += glm::vec3(
+		cos_yaw * f - sin_yaw * r,
+		0,
+		sin_yaw * f + cos_yaw * r
+		);
+	//*/
 	calculate();
 }
 
 void Camera::calculate()
 {
-	m_front = glm::vec3(0, 0, -1) * m_distance;
+	float sin_pitch = std::sin(m_pitch);
+	float cos_pitch = std::cos(m_pitch);
+	float sin_yaw = std::sin(m_yaw - glm::pi<float>() / 2);
+	float cos_yaw = std::cos(m_yaw - glm::pi<float>() / 2);
+
+	m_front = glm::vec3(
+		m_distance * cos_pitch * cos_yaw,
+		m_distance * sin_pitch,
+		m_distance * cos_pitch * sin_yaw
+		);
+
 	m_right = glm::normalize(glm::cross(m_front, glm::vec3(0, 1, 0)));
 	m_up = glm::cross(m_right, m_front);
 

@@ -50,7 +50,8 @@ private:
 	glm::mat4 m_projection;
 	Camera m_camera;
 
-	float m_lastFrameTime;
+	float m_deltaTime;
+	int m_fps = 0;
 
 	bool m_isFirstMouse = true;
 	float m_prevMouseX, m_prevMouseY;

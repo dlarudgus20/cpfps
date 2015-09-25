@@ -74,12 +74,48 @@ bool MainWnd::create()
 
 void MainWnd::loop()
 {
+	const float expectedDelta = 1.0f / 60.0f;
+
+	static float startTime = glfwGetTime();
+
+	static float frameTime = startTime, prevFrameTime;
+	static float remain = 0.0f;
+	static int fps = 0;
+
+	static float fpsResetTime = startTime + 1.0f;
+
 	while (!glfwWindowShouldClose(m_wnd))
 	{
 		glfwPollEvents();
-		render();
+
+		if (remain <= 0.0f)
+		{
+			render();
+			fps++;
+		}
+
 		idle();
-		glfwSwapBuffers(m_wnd);
+
+		prevFrameTime = frameTime;
+		frameTime = glfwGetTime();
+		m_deltaTime = frameTime - prevFrameTime;
+
+		if (fpsResetTime <= frameTime)
+		{
+			m_fps = fps;
+			fps = 0;
+			fpsResetTime += 1.0f;
+			std::cout << "fps: " << m_fps << std::endl;
+		}
+
+		if (remain <= 0.0f)
+		{
+			remain += expectedDelta - m_deltaTime;
+		}
+		else
+		{
+			remain -= m_deltaTime;
+		}
 	}
 }
 
@@ -92,13 +128,14 @@ void MainWnd::initCallback()
 	glfwSetWindowCloseCallback(m_wnd, [](GLFWwindow *wnd) {
 		THIZ->onWindowClose();
 	});
+	glfwSetCursorPosCallback(m_wnd, [](GLFWwindow *wnd, double xpos, double ypos) {
+		THIZ->onMouseCursorPos(xpos, ypos);
+	});
 #undef THIZ
 }
 
 bool MainWnd::initialize()
 {
-	m_lastFrameTime = glfwGetTime();
-
 	glfwSetInputMode(m_wnd, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	int width, height;
@@ -157,14 +194,13 @@ void MainWnd::render()
 		m_shader.setUniformMatrix4f("ourMatrix", model);
 		m_container.draw(m_shader);
 	}
+
+	glfwSwapBuffers(m_wnd);
 }
 
 void MainWnd::idle()
 {
-	float frameTime = glfwGetTime();
-	float deltaTime = frameTime - m_lastFrameTime;
-
-	const float unit = 1.5f;
+	const float unit = 3.0f;
 
 	int front = 0, right = 0;
 	front += glfwGetKey(m_wnd, GLFW_KEY_W) == GLFW_PRESS ? 1 : 0;
@@ -172,9 +208,7 @@ void MainWnd::idle()
 	right += glfwGetKey(m_wnd, GLFW_KEY_D) == GLFW_PRESS ? 1 : 0;
 	right += glfwGetKey(m_wnd, GLFW_KEY_A) == GLFW_PRESS ? -1 : 0;
 
-	m_camera.move(front, right, unit * deltaTime);
-
-	m_lastFrameTime = frameTime;
+	m_camera.move(front, right, unit * m_deltaTime);
 }
 
 void MainWnd::calcProjection(int width, int height)
@@ -204,10 +238,25 @@ void MainWnd::onMouseCursorPos(double xpos, double ypos)
 		glfwGetFramebufferSize(m_wnd, &width, &height);
 		if (!(width == 0 || height == 0))
 		{
-			const float sensitivity = 0.05f;
+			const float maxPitch = glm::radians(75.0f);
 
-			float d_yaw = ((float)xpos - m_prevMouseX) / width;
-			float d_pitch = ((float)ypos - m_prevMouseY) / height;
+			const float unit = glm::radians(60.0f);
+
+			float dx = (float)xpos - m_prevMouseX;
+			float dy = -((float)ypos - m_prevMouseY);
+
+			float pitch = m_camera.getPitch() + (dy / height) * unit;
+			float yaw = m_camera.getYaw() + (dx / width) * unit;
+
+			if (pitch > maxPitch)
+				pitch = maxPitch;
+			else if (pitch < -maxPitch)
+				pitch = -maxPitch;
+
+			m_camera.setPitchYaw(pitch, yaw);
+
+			m_prevMouseX = (float)xpos;
+			m_prevMouseY = (float)ypos;
 		}
 	}
 }
