@@ -32,6 +32,16 @@
 #include "pch.h"
 #include "Shader.h"
 
+namespace
+{
+	Shader *pCurrentShader = nullptr;
+}
+
+Shader *Shader::getCurrentShader()
+{
+	return pCurrentShader;
+}
+
 Shader::Shader()
 {
 }
@@ -41,6 +51,9 @@ Shader::~Shader()
 	glDeleteShader(m_vertexShader);
 	glDeleteShader(m_fragmentShader);
 	glDeleteProgram(m_shaderProgram);
+
+	if (pCurrentShader == this)
+		pCurrentShader = nullptr;
 }
 
 void Shader::compile(const char *vertex, const char *fragment)
@@ -62,6 +75,17 @@ void Shader::compile(const char *vertex, const char *fragment)
 void Shader::use()
 {
 	glUseProgram(m_shaderProgram);
+	pCurrentShader = this;
+}
+
+void Shader::setUniform1f(const char *var, float f)
+{
+	glUniform1f(findUniform(var), f);
+}
+
+void Shader::setUniform3f(const char *var, const glm::vec3 &vec3)
+{
+	glUniform3fv(findUniform(var), 1, glm::value_ptr(vec3));
 }
 
 void Shader::setUniform4f(const char *var, const glm::vec4 &vec4)
@@ -72,6 +96,11 @@ void Shader::setUniform4f(const char *var, const glm::vec4 &vec4)
 void Shader::setUniform1i(const char *var, GLint i)
 {
 	glUniform1i(findUniform(var), i);
+}
+
+void Shader::setUniformMatrix3f(const char *var, const glm::mat3 &mat)
+{
+	glUniformMatrix3fv(findUniform(var), 1, GL_FALSE, glm::value_ptr(mat));
 }
 
 void Shader::setUniformMatrix4f(const char *var, const glm::mat4 &mat)

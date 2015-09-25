@@ -23,35 +23,21 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /**
- * @file vertex.glsl
- * @date 2015. 9. 18.
+ * @file frag_nolight.glsl
+ * @date 2015. 9. 25.
  * @author dlarudgus20
  * @copyright The BSD (2-Clause) License
  */
 
 #version 330 core
 
-layout(location = 0) in vec3 position;
-layout(location = 1) in vec3 normal;
-layout(location = 2) in vec3 color;
-layout(location = 3) in vec2 texCoord;
+in vec2 fragTexCoord;
 
-out vec3 fragColor;
-out vec2 fragTexCoord;
-out vec3 fragNormal;
-out vec3 fragPos;
+out vec4 color;
 
-uniform mat4 ourMatrix;
-uniform mat4 ourvmMatrix;
+uniform sampler2D ourTexture;
 
 void main()
 {
-	vec4 pos = vec4(position, 1.0f);
-
-	fragColor = color;
-	fragTexCoord = vec2(texCoord.x, 1 - texCoord.y);
-	fragNormal = normal;
-	fragPos = vec3(ourvmMatrix * pos);
-
-	gl_Position = ourMatrix * pos;
+	color = texture(ourTexture, fragTexCoord) * vec4(16.0f);
 }

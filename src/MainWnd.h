@@ -36,6 +36,7 @@
 #include "Tetrahedron.h"
 #include "Container.h"
 #include "Camera.h"
+#include "Light.h"
 
 class MainWnd final
 {
@@ -45,10 +46,12 @@ public:
 private:
 	GLFWwindow *m_wnd;
 
-	Shader m_shader;
+	Shader m_shader, m_shaderNolight;
 
 	glm::mat4 m_projection;
 	Camera m_camera;
+
+	Light m_light;
 
 	float m_deltaTime;
 	int m_fps = 0;

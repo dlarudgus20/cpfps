@@ -139,11 +139,13 @@ void Container::initialize()
 	glBindVertexArray(0);
 }
 
-void Container::draw(Shader &shader)
+void Container::draw()
 {
+	Shader *pShader = Shader::getCurrentShader();
+
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, m_texture);
-	shader.setUniform1i("ourTexture", 0);
+	pShader->setUniform1i("ourTexture", 0);
 
 	glBindVertexArray(m_vao);
 	glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices) / strides);

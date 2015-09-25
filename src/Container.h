@@ -45,7 +45,7 @@ public:
 	~Container();
 
 	void initialize();
-	void draw(Shader &shader);
+	void draw();
 };
 
 #endif /* CONTAINER_H_ */

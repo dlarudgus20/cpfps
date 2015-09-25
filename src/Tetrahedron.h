@@ -45,7 +45,7 @@ public:
 	~Tetrahedron();
 
 	void initialize();
-	void draw(Shader &shader);
+	void draw();
 };
 
 #endif /* TETRAHEDRON_H_ */

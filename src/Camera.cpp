@@ -74,11 +74,11 @@ void Camera::setPitchYaw(float pitch, float yaw)
 
 void Camera::move(int front, int right, float unit)
 {
-	/*
+	///*
 	m_position += front * unit * m_front;
 	m_position += right * unit * m_right;
 	//*/
-	///*
+	/*
 	float f = front * unit;
 	float r = right * unit;
 	float sin_yaw = std::sin(m_yaw - glm::pi<float>() / 2);

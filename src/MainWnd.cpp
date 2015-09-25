@@ -149,13 +149,15 @@ bool MainWnd::initialize()
 	try
 	{
 		m_shader.compile("src/vertex.glsl", "src/fragment.glsl");
+		m_shaderNolight.compile("src/vertex.glsl", "src/frag_nolight.glsl");
 	}
 	catch (Shader::CompileError &e)
 	{
 		std::cerr << "Shader::CompileError : " << e.what() << std::endl;
 		return false;
 	}
-	m_shader.use();
+
+	m_light.initialize();
 
 	m_tetra.initialize();
 	m_container.initialize();
@@ -168,39 +170,32 @@ void MainWnd::render()
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	static glm::vec3 cubePos[] = {
-		{ 0.0f,  0.0f,  0.0f },
-		{ 2.0f,  5.0f, -15.0f },
-		{-1.5f, -2.2f, -2.5f },
-		{-3.8f, -2.0f, -12.3f },
-		{ 2.4f, -0.4f, -3.5f },
-		{-1.7f,  3.0f, -7.5f },
-		{ 1.3f, -2.0f, -2.5f },
-		{ 1.5f,  2.0f, -2.5f },
-		{ 1.5f,  0.2f, -1.5f },
-		{-1.3f,  1.0f, -1.5f },
-	};
+	glm::mat4 vmMatrix = m_camera.getMatrix();
+	glm::mat3 tivmMatrix;
 
-	glm::mat4 pvMatrix = m_projection * m_camera.getMatrix();
+	auto calc_tivm = [&] { tivmMatrix = glm::mat3(glm::transpose(glm::inverse(vmMatrix))); };
+	calc_tivm();
 
-	for (std::size_t i = 0; i < sizeof(cubePos) / sizeof(cubePos[0]); ++i)
-	{
-		float angle = (float)glm::radians(i * 20.0 + glfwGetTime() * 60.0);
+	m_shader.use();
+	m_light.applyToCurrentShader(m_camera.getMatrix());
+	m_shader.setUniformMatrix4f("ourMatrix", m_projection * vmMatrix);
+	m_shader.setUniformMatrix4f("ourvmMatrix", vmMatrix);
+	m_shader.setUniformMatrix3f("ourtivmMatrix", tivmMatrix);
+	m_container.draw();
 
-		glm::mat4 model = pvMatrix;
-		model = glm::translate(model, cubePos[i]);
-		model = glm::rotate(model, angle, glm::vec3(1.0f, 0.3f, 0.5f));
-
-		m_shader.setUniformMatrix4f("ourMatrix", model);
-		m_container.draw(m_shader);
-	}
+	vmMatrix = glm::translate(vmMatrix, m_light.getLightPos());
+	vmMatrix = glm::scale(vmMatrix, glm::vec3(0.2f));
+	m_shaderNolight.use();
+	m_shader.setUniformMatrix4f("ourMatrix", m_projection * vmMatrix);
+	m_shader.setUniformMatrix4f("ourvmMatrix", vmMatrix);
+	m_container.draw();
 
 	glfwSwapBuffers(m_wnd);
 }
 
 void MainWnd::idle()
 {
-	const float unit = 3.0f;
+	const float unit = 2.5f;
 
 	int front = 0, right = 0;
 	front += glfwGetKey(m_wnd, GLFW_KEY_W) == GLFW_PRESS ? 1 : 0;

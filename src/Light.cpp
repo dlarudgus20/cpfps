@@ -23,35 +23,39 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /**
- * @file vertex.glsl
- * @date 2015. 9. 18.
+ * @file Light.cpp
+ * @date 2015. 9. 25.
  * @author dlarudgus20
  * @copyright The BSD (2-Clause) License
  */
 
-#version 330 core
+#include "pch.h"
+#include "Light.h"
+#include "Shader.h"
 
-layout(location = 0) in vec3 position;
-layout(location = 1) in vec3 normal;
-layout(location = 2) in vec3 color;
-layout(location = 3) in vec2 texCoord;
-
-out vec3 fragColor;
-out vec2 fragTexCoord;
-out vec3 fragNormal;
-out vec3 fragPos;
-
-uniform mat4 ourMatrix;
-uniform mat4 ourvmMatrix;
-
-void main()
+Light::Light()
 {
-	vec4 pos = vec4(position, 1.0f);
+}
 
-	fragColor = color;
-	fragTexCoord = vec2(texCoord.x, 1 - texCoord.y);
-	fragNormal = normal;
-	fragPos = vec3(ourvmMatrix * pos);
+Light::~Light()
+{
+}
 
-	gl_Position = ourMatrix * pos;
+const glm::vec3 &Light::getLightPos() const
+{
+	return m_lightPos;
+}
+
+void Light::initialize()
+{
+	m_lightPos = glm::vec3(2.0f, 1.0f, 1.2f);
+	m_lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
+}
+
+void Light::applyToCurrentShader(const glm::mat4 &viewMatrix)
+{
+	glm::vec3 pos = glm::vec3(viewMatrix * glm::vec4(m_lightPos, 1.0f));
+	Shader *pShader = Shader::getCurrentShader();
+	pShader->setUniform3f("lightPos", pos);
+	pShader->setUniform3f("lightColor", m_lightColor);
 }

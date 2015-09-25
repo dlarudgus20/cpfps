@@ -23,7 +23,7 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /**
- * @file fragment.fs
+ * @file fragment.glsl
  * @date 2015. 9. 18.
  * @author dlarudgus20
  * @copyright The BSD (2-Clause) License
@@ -31,14 +31,41 @@
 
 #version 330 core
 
-in vec3 ourColor;
-in vec2 ourTexCoord;
+in vec3 fragColor;
+in vec2 fragTexCoord;
+in vec3 fragNormal;
+in vec3 fragPos;
 
 out vec4 color;
 
 uniform sampler2D ourTexture;
 
+uniform vec3 lightPos;
+uniform vec3 lightColor;
+
+uniform mat3 ourtivmMatrix;
+
 void main()
 {
-	color = texture(ourTexture, ourTexCoord) * vec4(ourColor, 1.0f);
+	float ambientStrength = 0.1f;
+	float diffuseStrength = 1.0f;
+	float specularStrength = 0.5f;
+	float shininess = 32;
+
+	vec3 norm = ourtivmMatrix * normalize(fragNormal);
+	vec3 lightDir = normalize(lightPos - fragPos);
+
+	vec3 ambient = ambientStrength * lightColor;
+
+	float diff = max(dot(norm, lightDir), 0.0f);
+	vec3 diffuse = diffuseStrength * diff * lightColor;
+
+	vec3 viewDir = normalize(-fragPos);
+	vec3 reflectDir = reflect(-lightDir, norm);
+	float spec = pow(max(dot(viewDir, reflectDir), 0.0f), shininess);
+	vec3 specular = specularStrength * spec * lightColor;
+
+	vec3 result = ambient + diffuse + specular;
+
+	color = vec4(result, 1.0f) * texture(ourTexture, fragTexCoord) * fragColor;
 }

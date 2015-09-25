@@ -23,35 +23,30 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /**
- * @file vertex.glsl
- * @date 2015. 9. 18.
+ * @file Light.h
+ * @date 2015. 9. 25.
  * @author dlarudgus20
  * @copyright The BSD (2-Clause) License
  */
 
-#version 330 core
+#ifndef LIGHT_H_
+#define LIGHT_H_
 
-layout(location = 0) in vec3 position;
-layout(location = 1) in vec3 normal;
-layout(location = 2) in vec3 color;
-layout(location = 3) in vec2 texCoord;
-
-out vec3 fragColor;
-out vec2 fragTexCoord;
-out vec3 fragNormal;
-out vec3 fragPos;
-
-uniform mat4 ourMatrix;
-uniform mat4 ourvmMatrix;
-
-void main()
+class Light
 {
-	vec4 pos = vec4(position, 1.0f);
+private:
+	glm::vec3 m_lightPos;
+	glm::vec3 m_lightColor;
 
-	fragColor = color;
-	fragTexCoord = vec2(texCoord.x, 1 - texCoord.y);
-	fragNormal = normal;
-	fragPos = vec3(ourvmMatrix * pos);
+public:
+	Light();
+	~Light();
 
-	gl_Position = ourMatrix * pos;
-}
+	const glm::vec3 &getLightPos() const;
+
+	void initialize();
+
+	void applyToCurrentShader(const glm::mat4 &viewMatrix);
+};
+
+#endif /* LIGHT_H_ */

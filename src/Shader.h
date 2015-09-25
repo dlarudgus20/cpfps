@@ -34,6 +34,9 @@
 
 class Shader final
 {
+public:
+	static Shader *getCurrentShader();
+
 private:
 	GLuint m_vertexShader, m_fragmentShader;
 	GLuint m_shaderProgram;
@@ -45,8 +48,11 @@ public:
 	void compile(const char *vertex, const char *fragment);
 	void use();
 
+	void setUniform1f(const char *var, float f);
+	void setUniform3f(const char *var, const glm::vec3 &vec3);
 	void setUniform4f(const char *var, const glm::vec4 &vec4);
 	void setUniform1i(const char *var, GLint i);
+	void setUniformMatrix3f(const char *var, const glm::mat3 &mat);
 	void setUniformMatrix4f(const char *var, const glm::mat4 &mat);
 
 	class CompileError : public std::runtime_error
