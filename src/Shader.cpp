@@ -149,12 +149,11 @@ GLuint Shader::loadFile(const char *filename, GLuint shaderType)
 			if (info.size() > 0)
 				info.erase(info.end() - 1);
 
-			throw CompileError(info);
+			throw CompileError("[" + std::string(filename) + "] : " + info);
 		}
 	}
 	catch (std::ios::failure &e)
 	{
-		throw CompileError(
-			"[" + std::string(filename) + "] : " + e.what());
+		throw CompileError("[" + std::string(filename) + "] : " + e.what());
 	}
 }

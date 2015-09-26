@@ -153,7 +153,7 @@ bool MainWnd::initialize()
 	}
 	catch (Shader::CompileError &e)
 	{
-		std::cerr << "Shader::CompileError : " << e.what() << std::endl;
+		std::cerr << "[Shader::CompileError] " << e.what() << std::endl;
 		return false;
 	}
 
@@ -190,8 +190,8 @@ void MainWnd::render()
 	vmMatrix = glm::translate(vmMatrix, m_light.getPosition());
 	vmMatrix = glm::scale(vmMatrix, glm::vec3(0.2f));
 	m_shaderNolight.use();
-	m_shader.setUniformMatrix4f("ourMatrix", m_projection * vmMatrix);
-	m_shader.setUniformMatrix4f("ourvmMatrix", vmMatrix);
+	m_shaderNolight.setUniformMatrix4f("ourMatrix", m_projection * vmMatrix);
+	//m_shaderNolight.setUniformMatrix4f("ourvmMatrix", vmMatrix);
 	m_container.draw();
 
 	glfwSwapBuffers(m_wnd);
