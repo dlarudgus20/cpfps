@@ -55,14 +55,14 @@ out vec4 color;
 uniform Light light;
 uniform Material material;
 
-uniform mat3 ourtivmMatrix;
+uniform mat3 NormalMatrix;
 
 void main()
 {
 	vec3 diffmap = texture(material.diffuseMap, fragTexCoord).xyz;
 	vec3 specmap = texture(material.specularMap, fragTexCoord).xyz;
 
-	vec3 norm = ourtivmMatrix * normalize(fragNormal);
+	vec3 norm = NormalMatrix * normalize(fragNormal);
 	vec3 lightDir = normalize(light.position - fragPos);
 
 	vec3 ambient = diffmap * light.ambient;

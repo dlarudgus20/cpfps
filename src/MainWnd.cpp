@@ -72,17 +72,55 @@ bool MainWnd::create()
 	}
 }
 
+auto timeStr = [] (double time) {
+	int s = static_cast<int>(time);
+	char buf[11];
+	int hour = s / 3600;
+	int minutes = (s % 3600) / 60;
+	int seconds = s % 60;
+	snprintf(buf, 11, "[%02d:%02d:%02d]", hour, minutes, seconds);
+	return std::string(buf);
+};
+
 void MainWnd::loop()
 {
-	const float expectedDelta = 1.0f / 60.0f;
-
-	static float startTime = glfwGetTime();
-
-	static float frameTime = startTime, prevFrameTime;
-	static float remain = 0.0f;
+	static double startTime = glfwGetTime();
+	static double frameTime = startTime, prevFrameTime;
+	static double fpsResetTime = startTime + 1.0f;
 	static int fps = 0;
 
-	static float fpsResetTime = startTime + 1.0f;
+	while (!glfwWindowShouldClose(m_wnd))
+	{
+		glfwPollEvents();
+		render();
+		fps++;
+		idle();
+
+		prevFrameTime = frameTime;
+		frameTime = glfwGetTime();
+		m_deltaTime = frameTime - prevFrameTime;
+
+		if (fpsResetTime <= frameTime)
+		{
+			m_fps = fps;
+			fps = 0;
+			fpsResetTime += 1.0;
+			std::cout << timeStr(frameTime) << " fps: " << m_fps << std::endl;
+		}
+	}
+}
+
+void MainWnd::loopManualFPS()
+{
+	const double expectedDelta = 1.0 / 60.0;
+
+	static double startTime = glfwGetTime();
+
+	static double frameTime = startTime, prevFrameTime;
+	static double remain = 0.0f;
+	static int fps = 0;
+
+	static double fpsResetTime = startTime + 1.0;
 
 	while (!glfwWindowShouldClose(m_wnd))
 	{
@@ -104,18 +142,8 @@ void MainWnd::loop()
 		{
 			m_fps = fps;
 			fps = 0;
-			fpsResetTime += 1.0f;
-
-			auto timeStr = [] {
-				int s = static_cast<int>(glfwGetTime());
-				char buf[11];
-				int hour = s / 3600;
-				int minutes = (s % 3600) / 60;
-				int seconds = s % 60;
-				snprintf(buf, 11, "[%02d:%02d:%02d]", hour, minutes, seconds);
-				return std::string(buf);
-			};
-			std::cout << timeStr() << " fps: " << m_fps << std::endl;
+			fpsResetTime += 1.0;
+			std::cout << timeStr(frameTime) << " fps: " << m_fps << std::endl;
 		}
 
 		if (remain <= 0.0f)
@@ -187,15 +215,15 @@ void MainWnd::render()
 
 	m_shader.use();
 	m_light.apply(m_camera.getMatrix());
-	m_shader.setUniformMatrix4f("ourMatrix", m_projection * vmMatrix);
-	m_shader.setUniformMatrix4f("ourvmMatrix", vmMatrix);
-	m_shader.setUniformMatrix3f("ourtivmMatrix", tivmMatrix);
+	m_shader.setUniformMatrix4f("pvmMatrix", m_projection * vmMatrix);
+	m_shader.setUniformMatrix4f("vmMatrix", vmMatrix);
+	m_shader.setUniformMatrix3f("NormalMatrix", tivmMatrix);
 	m_container.draw();
 
 	vmMatrix = glm::translate(vmMatrix, m_light.getPosition());
 	vmMatrix = glm::scale(vmMatrix, glm::vec3(0.2f));
 	m_shaderNolight.use();
-	m_shaderNolight.setUniformMatrix4f("ourMatrix", m_projection * vmMatrix);
+	m_shaderNolight.setUniformMatrix4f("pvmMatrix", m_projection * vmMatrix);
 	m_container.draw(false);
 
 	glfwSwapBuffers(m_wnd);

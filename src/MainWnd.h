@@ -52,7 +52,7 @@ private:
 
 	Light m_light;
 
-	float m_deltaTime;
+	double m_deltaTime;
 	int m_fps = 0;
 
 	bool m_isFirstMouse = true;
@@ -68,6 +68,7 @@ public:
 
 	bool initialize();
 	void loop();
+	void loopManualFPS();
 
 private:
 	void initCallback();

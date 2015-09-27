@@ -39,8 +39,8 @@ out vec2 fragTexCoord;
 out vec3 fragNormal;
 out vec3 fragPos;
 
-uniform mat4 ourMatrix;
-uniform mat4 ourvmMatrix;
+uniform mat4 pvmMatrix;
+uniform mat4 vmMatrix;
 
 void main()
 {
@@ -48,7 +48,7 @@ void main()
 
 	fragTexCoord = vec2(texCoord.x, 1 - texCoord.y);
 	fragNormal = normal;
-	fragPos = vec3(ourvmMatrix * pos);
+	fragPos = vec3(vmMatrix * pos);
 
-	gl_Position = ourMatrix * pos;
+	gl_Position = pvmMatrix * pos;
 }
