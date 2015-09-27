@@ -33,7 +33,6 @@
 #define MAINWND_H_
 
 #include "Shader.h"
-#include "Tetrahedron.h"
 #include "Container.h"
 #include "Camera.h"
 #include "Light.h"
@@ -59,7 +58,6 @@ private:
 	bool m_isFirstMouse = true;
 	float m_prevMouseX, m_prevMouseY;
 
-	Tetrahedron m_tetra;
 	Container m_container;
 
 	MainWnd();

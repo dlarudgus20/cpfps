@@ -46,7 +46,7 @@ public:
 
 	void initialize();
 
-	void applyToCurrentShader(const glm::mat4 &viewMatrix);
+	void apply(const glm::mat4 &viewMatrix);
 };
 
 #endif /* LIGHT_H_ */

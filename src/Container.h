@@ -32,20 +32,21 @@
 #ifndef CONTAINER_H_
 #define CONTAINER_H_
 
+#include "Material.h"
 class Shader;
 
 class Container
 {
 private:
 	GLuint m_vbo, m_vao;
-	GLuint m_texture;
+	Material m_material;
 
 public:
 	Container();
 	~Container();
 
 	void initialize();
-	void draw();
+	void draw(bool bUseMaterial = true);
 };
 
 #endif /* CONTAINER_H_ */

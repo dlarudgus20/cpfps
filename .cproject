@@ -45,6 +45,12 @@
 								<option id="gnu.c.compiler.option.warnings.extrawarn.488303988" name="Extra warnings (-Wextra)" superClass="gnu.c.compiler.option.warnings.extrawarn" useByScannerDiscovery="false" value="true" valueType="boolean"/>
 								<option id="gnu.c.compiler.option.warnings.pedantic.2109908982" name="Pedantic (-pedantic)" superClass="gnu.c.compiler.option.warnings.pedantic" useByScannerDiscovery="false" value="false" valueType="boolean"/>
 								<option id="gnu.c.compiler.option.warnings.toerrors.328444121" name="Warnings as errors (-Werror)" superClass="gnu.c.compiler.option.warnings.toerrors" useByScannerDiscovery="false" value="true" valueType="boolean"/>
+								<option id="gnu.c.compiler.option.include.paths.301677426" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${GLFW_DIR}\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${GLEW_DIR}\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${GLM_DIR}\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${SOIL_DIR}\include&quot;"/>
+								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.2080313024" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.linker.mingw.exe.debug.1174907722" name="MinGW C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.mingw.exe.debug"/>
@@ -114,10 +120,8 @@
 									<listOptionValue builtIn="false" value="&quot;${GLM_DIR}\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${SOIL_DIR}\include&quot;"/>
 								</option>
-								<option id="gnu.cpp.compiler.option.preprocessor.def.2018429828" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
-									<listOptionValue builtIn="false" value="NDEBUG"/>
-								</option>
-								<option id="gnu.cpp.compiler.option.optimization.flags.1737954397" superClass="gnu.cpp.compiler.option.optimization.flags" value="-flto" valueType="string"/>
+								<option id="gnu.cpp.compiler.option.preprocessor.def.2018429828" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols"/>
+								<option id="gnu.cpp.compiler.option.optimization.flags.1737954397" name="Other optimization flags" superClass="gnu.cpp.compiler.option.optimization.flags" value="-flto" valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.681592074" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.compiler.mingw.exe.release.519146192" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.mingw.exe.release">
@@ -128,6 +132,12 @@
 								<option id="gnu.c.compiler.option.warnings.extrawarn.909331010" name="Extra warnings (-Wextra)" superClass="gnu.c.compiler.option.warnings.extrawarn" value="true" valueType="boolean"/>
 								<option id="gnu.c.compiler.option.warnings.pedantic.205702666" name="Pedantic (-pedantic)" superClass="gnu.c.compiler.option.warnings.pedantic" value="false" valueType="boolean"/>
 								<option id="gnu.c.compiler.option.warnings.toerrors.1332906071" name="Warnings as errors (-Werror)" superClass="gnu.c.compiler.option.warnings.toerrors" value="true" valueType="boolean"/>
+								<option id="gnu.c.compiler.option.include.paths.1009069383" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${GLFW_DIR}\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${GLEW_DIR}\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${GLM_DIR}\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${SOIL_DIR}\include&quot;"/>
+								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.778830694" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.linker.mingw.exe.release.458317542" name="MinGW C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.mingw.exe.release"/>
@@ -148,7 +158,7 @@
 									<listOptionValue builtIn="false" value="&quot;${GLEW_DIR}\lib&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${SOIL_DIR}\lib&quot;"/>
 								</option>
-								<option id="gnu.cpp.link.option.flags.472411851" superClass="gnu.cpp.link.option.flags" value="-flto" valueType="string"/>
+								<option id="gnu.cpp.link.option.flags.472411851" name="Linker flags" superClass="gnu.cpp.link.option.flags" value="-flto" valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.1691902253" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>

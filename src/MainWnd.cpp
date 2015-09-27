@@ -105,7 +105,17 @@ void MainWnd::loop()
 			m_fps = fps;
 			fps = 0;
 			fpsResetTime += 1.0f;
-			std::cout << "fps: " << m_fps << std::endl;
+
+			auto timeStr = [] {
+				int s = static_cast<int>(glfwGetTime());
+				char buf[11];
+				int hour = s / 3600;
+				int minutes = (s % 3600) / 60;
+				int seconds = s % 60;
+				snprintf(buf, 11, "[%02d:%02d:%02d]", hour, minutes, seconds);
+				return std::string(buf);
+			};
+			std::cout << timeStr() << " fps: " << m_fps << std::endl;
 		}
 
 		if (remain <= 0.0f)
@@ -159,7 +169,6 @@ bool MainWnd::initialize()
 
 	m_light.initialize();
 
-	m_tetra.initialize();
 	m_container.initialize();
 
 	return true;
@@ -177,22 +186,17 @@ void MainWnd::render()
 	calc_tivm();
 
 	m_shader.use();
-	m_light.applyToCurrentShader(m_camera.getMatrix());
+	m_light.apply(m_camera.getMatrix());
 	m_shader.setUniformMatrix4f("ourMatrix", m_projection * vmMatrix);
 	m_shader.setUniformMatrix4f("ourvmMatrix", vmMatrix);
 	m_shader.setUniformMatrix3f("ourtivmMatrix", tivmMatrix);
-	m_shader.setUniform3f("material.ambient", { 1.0f, 0.5f, 0.31f });
-	m_shader.setUniform3f("material.diffuse", { 1.0f, 0.5f, 0.31f });
-	m_shader.setUniform3f("material.specular", { 0.5f, 0.5f, 0.5f });
-	m_shader.setUniform1f("material.shininess", 32.0f);
 	m_container.draw();
 
 	vmMatrix = glm::translate(vmMatrix, m_light.getPosition());
 	vmMatrix = glm::scale(vmMatrix, glm::vec3(0.2f));
 	m_shaderNolight.use();
 	m_shaderNolight.setUniformMatrix4f("ourMatrix", m_projection * vmMatrix);
-	//m_shaderNolight.setUniformMatrix4f("ourvmMatrix", vmMatrix);
-	m_container.draw();
+	m_container.draw(false);
 
 	glfwSwapBuffers(m_wnd);
 }

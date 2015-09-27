@@ -23,29 +23,56 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /**
- * @file Tetrahedron.h
- * @date 2015. 9. 22.
+ * @file Texture.h
+ * @date 2015. 9. 27.
  * @author dlarudgus20
  * @copyright The BSD (2-Clause) License
  */
 
-#ifndef TETRAHEDRON_H_
-#define TETRAHEDRON_H_
+#ifndef TEXTURE_H_
+#define TEXTURE_H_
 
-class Shader;
-
-class Tetrahedron final
+class Texture
 {
 private:
-	GLuint m_vbo, m_vao;
 	GLuint m_texture;
 
 public:
-	Tetrahedron();
-	~Tetrahedron();
+	static void bind(int idx, const Texture *pTexture);
 
-	void initialize();
-	void draw();
+	class Parameter
+	{
+	private:
+		std::map<GLenum, GLint> m_params;
+	public:
+		static Parameter getDefault();
+
+		struct Functor
+		{
+			Parameter *thiz;
+			GLenum idx;
+			Parameter &operator ()(GLint par) const
+			{
+				thiz->m_params[idx] = par;
+				return *thiz;
+			}
+		};
+		Functor operator [](GLenum idx)
+		{
+			return Functor { this, idx };
+		}
+		void apply() const;
+	};
+
+	explicit Texture(const char *file, const Parameter &params);
+	~Texture();
+
+	class LoadError : public std::runtime_error
+	{
+	public:
+		explicit LoadError(const std::string &msg)
+			: std::runtime_error(msg) { }
+	};
 };
 
-#endif /* TETRAHEDRON_H_ */
+#endif /* TEXTURE_H_ */

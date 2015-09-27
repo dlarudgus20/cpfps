@@ -23,43 +23,64 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /**
- * @file Light.cpp
- * @date 2015. 9. 25.
+ * @file Texture.cpp
+ * @date 2015. 9. 27.
  * @author dlarudgus20
  * @copyright The BSD (2-Clause) License
  */
 
 #include "pch.h"
-#include "Light.h"
-#include "Shader.h"
+#include "Texture.h"
 
-Light::Light()
+void Texture::bind(int idx, const Texture *pTexture)
 {
+	glActiveTexture(GL_TEXTURE0 + idx);
+	if (pTexture != nullptr)
+		glBindTexture(GL_TEXTURE_2D, pTexture->m_texture);
+	else
+		glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-Light::~Light()
+Texture::Texture(const char *file, const Parameter &params)
 {
+	glGenTextures(1, &m_texture);
+	glBindTexture(GL_TEXTURE_2D, m_texture);
+	{
+		params.apply();
+
+		int texWidth, texHeight;
+		unsigned char *image = SOIL_load_image(file, &texWidth, &texHeight, nullptr, SOIL_LOAD_RGB);
+		if (image == nullptr)
+		{
+			throw LoadError("[" + std::string(file) + "] : failed to load");
+		}
+
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texWidth, texHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+		glGenerateMipmap(GL_TEXTURE_2D);
+
+		SOIL_free_image_data(image);
+	}
+	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-const glm::vec3 &Light::getPosition() const
+Texture::~Texture()
 {
-	return m_position;
+	glDeleteTextures(1, &m_texture);
 }
 
-void Light::initialize()
+Texture::Parameter Texture::Parameter::getDefault()
 {
-	m_position = glm::vec3(2.0f, 1.0f, 1.2f);
-	m_ambient = glm::vec3(0.1f, 0.1f, 0.1f);
-	m_diffuse = glm::vec3(1.0f, 1.0f, 1.0f);
-	m_specular = glm::vec3(1.0f, 1.0f, 1.0f);
+	return Parameter()
+		[GL_TEXTURE_WRAP_S](GL_REPEAT)
+		[GL_TEXTURE_WRAP_T](GL_REPEAT)
+		[GL_TEXTURE_MIN_FILTER](GL_LINEAR_MIPMAP_LINEAR)
+		[GL_TEXTURE_MAG_FILTER](GL_LINEAR);
 }
 
-void Light::apply(const glm::mat4 &viewMatrix)
+void Texture::Parameter::apply() const
 {
-	glm::vec3 pos = glm::vec3(viewMatrix * glm::vec4(m_position, 1.0f));
-	Shader *pShader = Shader::getCurrentShader();
-	pShader->setUniform3f("light.position", pos);
-	pShader->setUniform3f("light.ambient", m_ambient);
-	pShader->setUniform3f("light.diffuse", m_diffuse);
-	pShader->setUniform3f("light.specular", m_specular);
+	for (const auto &pr : m_params)
+	{
+		glTexParameteri(GL_TEXTURE_2D, pr.first, pr.second);
+	}
 }

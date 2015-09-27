@@ -33,9 +33,8 @@
 
 struct Material
 {
-	vec3 ambient;
-	vec3 diffuse;
-	vec3 specular;
+	sampler2D diffuseMap;
+	sampler2D specularMap;
 	float shininess;
 };
 
@@ -47,14 +46,11 @@ struct Light
 	vec3 specular;
 };
 
-in vec3 fragColor;
 in vec2 fragTexCoord;
 in vec3 fragNormal;
 in vec3 fragPos;
 
 out vec4 color;
-
-uniform sampler2D ourTexture;
 
 uniform Light light;
 uniform Material material;
@@ -63,20 +59,23 @@ uniform mat3 ourtivmMatrix;
 
 void main()
 {
+	vec3 diffmap = texture(material.diffuseMap, fragTexCoord).xyz;
+	vec3 specmap = texture(material.specularMap, fragTexCoord).xyz;
+
 	vec3 norm = ourtivmMatrix * normalize(fragNormal);
 	vec3 lightDir = normalize(light.position - fragPos);
 
-	vec3 ambient = material.ambient * light.ambient;
+	vec3 ambient = diffmap * light.ambient;
 
 	float diff = max(dot(norm, lightDir), 0.0f);
-	vec3 diffuse = diff * material.diffuse * light.diffuse;
+	vec3 diffuse = diff * diffmap * light.diffuse;
 
 	vec3 viewDir = normalize(-fragPos);
 	vec3 reflectDir = reflect(-lightDir, norm);
 	float spec = pow(max(dot(viewDir, reflectDir), 0.0f), material.shininess);
-	vec3 specular = spec * material.specular * light.specular;
+	vec3 specular = spec * specmap * light.specular;
 
 	vec3 result = ambient + diffuse + specular;
 
-	color = vec4(result, 1.0f) * texture(ourTexture, fragTexCoord) * vec4(fragColor, 1.0f);
+	color = vec4(result, 1.0f);
 }

@@ -36,49 +36,50 @@
 namespace
 {
 	GLfloat vertices[] = {
-		-0.5f, -0.5f, -0.5f,	0.0f, 0.0f, -1.0f,	1.0f, 1.0f, 1.0f,	0.0f, 0.0f,
-		0.5f, -0.5f, -0.5f,		0.0f, 0.0f, -1.0f,	1.0f, 1.0f, 1.0f,	1.0f, 0.0f,
-		0.5f, 0.5f, -0.5f,		0.0f, 0.0f, -1.0f,	1.0f, 1.0f, 1.0f,	1.0f, 1.0f,
-		 0.5f, 0.5f, -0.5f,		0.0f, 0.0f, -1.0f,	1.0f, 1.0f, 1.0f,	1.0f, 1.0f,
-		-0.5f, 0.5f, -0.5f,		0.0f, 0.0f, -1.0f,	1.0f, 1.0f, 1.0f,	0.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f,	0.0f, 0.0f, -1.0f,	1.0f, 1.0f, 1.0f,	0.0f, 0.0f,
+		// position, normal, texture
+		-0.5f, -0.5f, -0.5f,	0.0f, 0.0f, -1.0f,	0.0f, 0.0f,
+		0.5f, -0.5f, -0.5f,		0.0f, 0.0f, -1.0f,	1.0f, 0.0f,
+		0.5f, 0.5f, -0.5f,		0.0f, 0.0f, -1.0f,	1.0f, 1.0f,
+		 0.5f, 0.5f, -0.5f,		0.0f, 0.0f, -1.0f,	1.0f, 1.0f,
+		-0.5f, 0.5f, -0.5f,		0.0f, 0.0f, -1.0f,	0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,	0.0f, 0.0f, -1.0f,	0.0f, 0.0f,
 
-		-0.5f, -0.5f, 0.5f,		0.0f, 0.0f, 1.0f,	1.0f, 1.0f, 1.0f,	0.0f, 0.0f,
-		0.5f, -0.5f, 0.5f,		0.0f, 0.0f, 1.0f,	1.0f, 1.0f, 1.0f,	1.0f, 0.0f,
-		0.5f, 0.5f, 0.5f,		0.0f, 0.0f, 1.0f,	1.0f, 1.0f, 1.0f,	1.0f, 1.0f,
-		0.5f, 0.5f, 0.5f,		0.0f, 0.0f, 1.0f,	1.0f, 1.0f, 1.0f,	1.0f, 1.0f,
-		-0.5f, 0.5f, 0.5f,		0.0f, 0.0f, 1.0f,	1.0f, 1.0f, 1.0f,	0.0f, 1.0f,
-		-0.5f, -0.5f, 0.5f,		0.0f, 0.0f, 1.0f,	1.0f, 1.0f, 1.0f,	0.0f, 0.0f,
+		-0.5f, -0.5f, 0.5f,		0.0f, 0.0f, 1.0f,	0.0f, 0.0f,
+		0.5f, -0.5f, 0.5f,		0.0f, 0.0f, 1.0f,	1.0f, 0.0f,
+		0.5f, 0.5f, 0.5f,		0.0f, 0.0f, 1.0f,	1.0f, 1.0f,
+		0.5f, 0.5f, 0.5f,		0.0f, 0.0f, 1.0f,	1.0f, 1.0f,
+		-0.5f, 0.5f, 0.5f,		0.0f, 0.0f, 1.0f,	0.0f, 1.0f,
+		-0.5f, -0.5f, 0.5f,		0.0f, 0.0f, 1.0f,	0.0f, 0.0f,
 
-		-0.5f, 0.5f, 0.5f,		-1.0f, 0.0f, 0.0f,	1.0f, 1.0f, 1.0f,	1.0f, 0.0f,
-		-0.5f, 0.5f, -0.5f,		-1.0f, 0.0f, 0.0f,	1.0f, 1.0f, 1.0f,	1.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f,	-1.0f, 0.0f, 0.0f,	1.0f, 1.0f, 1.0f,	0.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f,	-1.0f, 0.0f, 0.0f,	1.0f, 1.0f, 1.0f,	0.0f, 1.0f,
-		-0.5f, -0.5f, 0.5f,		-1.0f, 0.0f, 0.0f,	1.0f, 1.0f, 1.0f,	0.0f, 0.0f,
-		-0.5f, 0.5f, 0.5f,		-1.0f, 0.0f, 0.0f,	1.0f, 1.0f, 1.0f,	1.0f, 0.0f,
+		-0.5f, 0.5f, 0.5f,		-1.0f, 0.0f, 0.0f,	1.0f, 0.0f,
+		-0.5f, 0.5f, -0.5f,		-1.0f, 0.0f, 0.0f,	1.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,	-1.0f, 0.0f, 0.0f,	0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,	-1.0f, 0.0f, 0.0f,	0.0f, 1.0f,
+		-0.5f, -0.5f, 0.5f,		-1.0f, 0.0f, 0.0f,	0.0f, 0.0f,
+		-0.5f, 0.5f, 0.5f,		-1.0f, 0.0f, 0.0f,	1.0f, 0.0f,
 
-		0.5f, 0.5f, 0.5f,		1.0f, 0.0f, 0.0f,	1.0f, 1.0f, 1.0f,	1.0f, 0.0f,
-		0.5f, 0.5f, -0.5f,		1.0f, 0.0f, 0.0f,	1.0f, 1.0f, 1.0f,	1.0f, 1.0f,
-		0.5f, -0.5f, -0.5f,		1.0f, 0.0f, 0.0f,	1.0f, 1.0f, 1.0f,	0.0f, 1.0f,
-		0.5f, -0.5f, -0.5f,		1.0f, 0.0f, 0.0f,	1.0f, 1.0f, 1.0f,	0.0f, 1.0f,
-		0.5f, -0.5f, 0.5f,		1.0f, 0.0f, 0.0f,	1.0f, 1.0f, 1.0f,	0.0f, 0.0f,
-		0.5f, 0.5f, 0.5f,		1.0f, 0.0f, 0.0f,	1.0f, 1.0f, 1.0f,	1.0f, 0.0f,
+		0.5f, 0.5f, 0.5f,		1.0f, 0.0f, 0.0f,	1.0f, 0.0f,
+		0.5f, 0.5f, -0.5f,		1.0f, 0.0f, 0.0f,	1.0f, 1.0f,
+		0.5f, -0.5f, -0.5f,		1.0f, 0.0f, 0.0f,	0.0f, 1.0f,
+		0.5f, -0.5f, -0.5f,		1.0f, 0.0f, 0.0f,	0.0f, 1.0f,
+		0.5f, -0.5f, 0.5f,		1.0f, 0.0f, 0.0f,	0.0f, 0.0f,
+		0.5f, 0.5f, 0.5f,		1.0f, 0.0f, 0.0f,	1.0f, 0.0f,
 
-		-0.5f, -0.5f, -0.5f,	0.0f, -1.0f, 0.0f,	1.0f, 1.0f, 1.0f,	0.0f, 1.0f,
-		0.5f, -0.5f, -0.5f,		0.0f, -1.0f, 0.0f,	1.0f, 1.0f, 1.0f,	1.0f, 1.0f,
-		0.5f, -0.5f, 0.5f,		0.0f, -1.0f, 0.0f,	1.0f, 1.0f, 1.0f,	1.0f, 0.0f,
-		0.5f, -0.5f, 0.5f,		0.0f, -1.0f, 0.0f,	1.0f, 1.0f, 1.0f,	1.0f, 0.0f,
-		-0.5f, -0.5f, 0.5f,		0.0f, -1.0f, 0.0f,	1.0f, 1.0f, 1.0f,	0.0f, 0.0f,
-		-0.5f, -0.5f, -0.5f,	0.0f, -1.0f, 0.0f,	1.0f, 1.0f, 1.0f,	0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,	0.0f, -1.0f, 0.0f,	0.0f, 1.0f,
+		0.5f, -0.5f, -0.5f,		0.0f, -1.0f, 0.0f,	1.0f, 1.0f,
+		0.5f, -0.5f, 0.5f,		0.0f, -1.0f, 0.0f,	1.0f, 0.0f,
+		0.5f, -0.5f, 0.5f,		0.0f, -1.0f, 0.0f,	1.0f, 0.0f,
+		-0.5f, -0.5f, 0.5f,		0.0f, -1.0f, 0.0f,	0.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f,	0.0f, -1.0f, 0.0f,	0.0f, 1.0f,
 
-		-0.5f, 0.5f, -0.5f,		0.0f, 1.0f, 0.0f,	1.0f, 1.0f, 1.0f,	0.0f, 1.0f,
-		0.5f, 0.5f, -0.5f,		0.0f, 1.0f, 0.0f,	1.0f, 1.0f, 1.0f,	1.0f, 1.0f,
-		0.5f, 0.5f, 0.5f,		0.0f, 1.0f, 0.0f,	1.0f, 1.0f, 1.0f,	1.0f, 0.0f,
-		0.5f, 0.5f, 0.5f,		0.0f, 1.0f, 0.0f,	1.0f, 1.0f, 1.0f,	1.0f, 0.0f,
-		-0.5f, 0.5f, 0.5f,		0.0f, 1.0f, 0.0f,	1.0f, 1.0f, 1.0f,	0.0f, 0.0f,
-		-0.5f, 0.5f, -0.5f,		0.0f, 1.0f, 0.0f,	1.0f, 1.0f, 1.0f,	0.0f, 1.0f,
+		-0.5f, 0.5f, -0.5f,		0.0f, 1.0f, 0.0f,	0.0f, 1.0f,
+		0.5f, 0.5f, -0.5f,		0.0f, 1.0f, 0.0f,	1.0f, 1.0f,
+		0.5f, 0.5f, 0.5f,		0.0f, 1.0f, 0.0f,	1.0f, 0.0f,
+		0.5f, 0.5f, 0.5f,		0.0f, 1.0f, 0.0f,	1.0f, 0.0f,
+		-0.5f, 0.5f, 0.5f,		0.0f, 1.0f, 0.0f,	0.0f, 0.0f,
+		-0.5f, 0.5f, -0.5f,		0.0f, 1.0f, 0.0f,	0.0f, 1.0f,
 	};
-	GLsizei strides = 11 * sizeof(GLfloat);
+	GLsizei strides = 8 * sizeof(GLfloat);
 }
 
 Container::Container()
@@ -90,32 +91,14 @@ Container::~Container()
 {
 	glDeleteVertexArrays(1, &m_vao);
 	glDeleteBuffers(1, &m_vbo);
-	glDeleteTextures(1, &m_texture);
 }
 
 void Container::initialize()
 {
-	glGenTextures(1, &m_texture);
-	glBindTexture(GL_TEXTURE_2D, m_texture);
-	{
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-		int texWidth, texHeight;
-		unsigned char *image = SOIL_load_image("res/container.jpg", &texWidth, &texHeight, nullptr, SOIL_LOAD_RGB);
-		if (image == nullptr)
-		{
-			throw "failed to load texture\n";
-		}
-
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texWidth, texHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
-		glGenerateMipmap(GL_TEXTURE_2D);
-
-		SOIL_free_image_data(image);
-	}
-	glBindTexture(GL_TEXTURE_2D, 0);
+	m_material.initialize(
+		std::make_shared<Texture>("res/container2.png", Texture::Parameter::getDefault()),
+		std::make_shared<Texture>("res/container2_specular.png", Texture::Parameter::getDefault()),
+		32.0f);
 
 	glGenVertexArrays(1, &m_vao);
 	glGenBuffers(1, &m_vbo);
@@ -129,25 +112,23 @@ void Container::initialize()
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, strides, (GLvoid *)(3 * sizeof(GLfloat)));
 		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, strides, (GLvoid *)(6 * sizeof(GLfloat)));
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, strides, (GLvoid *)(6 * sizeof(GLfloat)));
 		glEnableVertexAttribArray(2);
-		glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, strides, (GLvoid *)(9 * sizeof(GLfloat)));
-		glEnableVertexAttribArray(3);
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 	glBindVertexArray(0);
 }
 
-void Container::draw()
+void Container::draw(bool bUseMaterial /* = true */)
 {
-	Shader *pShader = Shader::getCurrentShader();
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, m_texture);
-	pShader->setUniform1i("ourTexture", 0);
+	if (bUseMaterial)
+		m_material.apply();
 
 	glBindVertexArray(m_vao);
 	glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices) / strides);
 	glBindVertexArray(0);
+
+	if (bUseMaterial)
+		m_material.unapply();
 }

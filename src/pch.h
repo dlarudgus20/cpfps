@@ -37,14 +37,18 @@
 #include <GLFW/glfw3.h>
 
 #include <iostream>
+#include <iomanip>
 #include <fstream>
+#include <sstream>
 #include <algorithm>
 #include <iterator>
 #include <string>
+#include <map>
 #include <memory>
 #include <exception>
 #include <stdexcept>
 #include <limits>
+#include <utility>
 
 #include <stdio.h>
 #include <stdlib.h>

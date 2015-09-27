@@ -23,43 +23,45 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /**
- * @file Light.cpp
- * @date 2015. 9. 25.
+ * @file Material.cpp
+ * @date 2015. 9. 27.
  * @author dlarudgus20
  * @copyright The BSD (2-Clause) License
  */
 
 #include "pch.h"
-#include "Light.h"
+#include "Material.h"
 #include "Shader.h"
 
-Light::Light()
+Material::Material()
 {
 }
 
-Light::~Light()
+Material::~Material()
 {
 }
 
-const glm::vec3 &Light::getPosition() const
+void Material::initialize(std::shared_ptr<Texture> diffuseMap, std::shared_ptr<Texture> specularMap, float shininess)
 {
-	return m_position;
+	m_diffuseMap = std::move(diffuseMap);
+	m_specularMap = std::move(specularMap);
+	m_shininess = shininess;
 }
 
-void Light::initialize()
+void Material::apply()
 {
-	m_position = glm::vec3(2.0f, 1.0f, 1.2f);
-	m_ambient = glm::vec3(0.1f, 0.1f, 0.1f);
-	m_diffuse = glm::vec3(1.0f, 1.0f, 1.0f);
-	m_specular = glm::vec3(1.0f, 1.0f, 1.0f);
-}
-
-void Light::apply(const glm::mat4 &viewMatrix)
-{
-	glm::vec3 pos = glm::vec3(viewMatrix * glm::vec4(m_position, 1.0f));
 	Shader *pShader = Shader::getCurrentShader();
-	pShader->setUniform3f("light.position", pos);
-	pShader->setUniform3f("light.ambient", m_ambient);
-	pShader->setUniform3f("light.diffuse", m_diffuse);
-	pShader->setUniform3f("light.specular", m_specular);
+
+	Texture::bind(0, m_diffuseMap.get());
+	Texture::bind(1, m_specularMap.get());
+
+	pShader->setUniform1i("material.diffuseMap", 0);
+	pShader->setUniform1i("material.specularMap", 1);
+	pShader->setUniform1f("material.shininess", m_shininess);
+}
+
+void Material::unapply()
+{
+	Texture::bind(0, nullptr);
+	Texture::bind(1, nullptr);
 }
