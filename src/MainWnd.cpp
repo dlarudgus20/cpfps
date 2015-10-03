@@ -208,16 +208,16 @@ void MainWnd::render()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glm::mat4 vmMatrix = m_camera.getMatrix();
-	glm::mat3 tivmMatrix;
+	glm::mat3 normalMatrix;
 
-	auto calc_tivm = [&] { tivmMatrix = glm::mat3(glm::transpose(glm::inverse(vmMatrix))); };
-	calc_tivm();
+	auto calcNormalMat = [&] { normalMatrix = glm::mat3(glm::transpose(glm::inverse(vmMatrix))); };
+	calcNormalMat();
 
 	m_shader.use();
 	m_light.apply(m_camera.getMatrix());
 	m_shader.setUniformMatrix4f("pvmMatrix", m_projection * vmMatrix);
 	m_shader.setUniformMatrix4f("vmMatrix", vmMatrix);
-	m_shader.setUniformMatrix3f("NormalMatrix", tivmMatrix);
+	m_shader.setUniformMatrix3f("NormalMatrix", normalMatrix);
 	m_container.draw();
 
 	vmMatrix = glm::translate(vmMatrix, m_light.getPosition());
