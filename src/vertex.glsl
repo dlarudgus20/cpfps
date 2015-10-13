@@ -39,7 +39,7 @@ out vec2 fragTexCoord;
 out vec3 fragNormal;
 out vec3 fragPos;
 
-uniform mat4 pvmMatrix;
+uniform mat4 projMatrix;
 uniform mat4 vmMatrix;
 
 void main()
@@ -50,5 +50,5 @@ void main()
 	fragNormal = normal;
 	fragPos = vec3(vmMatrix * pos);
 
-	gl_Position = pvmMatrix * pos;
+	gl_Position = projMatrix * vmMatrix * pos;
 }
