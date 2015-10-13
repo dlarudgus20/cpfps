@@ -24,7 +24,7 @@
 
 /**
  * @file Light.h
- * @date 2015. 9. 25.
+ * @date 2015. 10. 13.
  * @author dlarudgus20
  * @copyright The BSD (2-Clause) License
  */
@@ -34,19 +34,23 @@
 
 class Light
 {
-private:
-	glm::vec3 m_position;
+protected:
 	glm::vec3 m_ambient, m_diffuse, m_specular;
 
 public:
 	Light();
-	~Light();
+	virtual ~Light() = 0;
 
-	const glm::vec3 &getPosition() const;
+	void setAmbient(const glm::vec3 &ambient);
+	const glm::vec3 &getAmbient() const;
 
-	void initialize();
+	void setDiffuse(const glm::vec3 &diffuse);
+	const glm::vec3 &getDiffuse() const;
 
-	void apply(const glm::mat4 &viewMatrix);
+	void setSpecular(const glm::vec3 &specular);
+	const glm::vec3 &getSpecular() const;
+
+	virtual void apply(const glm::mat4 &viewMatrix) const = 0;
 };
 
 #endif /* LIGHT_H_ */

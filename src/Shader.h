@@ -35,6 +35,8 @@
 class Shader final
 {
 public:
+	static constexpr int POINTLIGHT_COUNT = 4;
+
 	static Shader *getCurrentShader();
 
 private:
@@ -48,12 +50,23 @@ public:
 	void compile(const char *vertex, const char *fragment);
 	void use();
 
-	void setUniform1f(const char *var, float f);
+	void setUniform1f(const char *var, GLfloat f);
+	void setUniform1f(const std::string &var, GLfloat f) { setUniform1f(var.c_str(), f); }
+
 	void setUniform3f(const char *var, const glm::vec3 &vec3);
+	void setUniform3f(const std::string &var, const glm::vec3 &vec3) { setUniform3f(var.c_str(), vec3); }
+
 	void setUniform4f(const char *var, const glm::vec4 &vec4);
+	void setUniform4f(const std::string &var, const glm::vec4 &vec4) { setUniform4f(var.c_str(), vec4); }
+
 	void setUniform1i(const char *var, GLint i);
+	void setUniform1i(const std::string &var, GLint i) { setUniform1i(var.c_str(), i); }
+
 	void setUniformMatrix3f(const char *var, const glm::mat3 &mat);
+	void setUniformMatrix3f(const std::string &var, const glm::mat3 &mat) { setUniformMatrix3f(var.c_str(), mat); }
+
 	void setUniformMatrix4f(const char *var, const glm::mat4 &mat);
+	void setUniformMatrix4f(const std::string &var, const glm::mat4 &mat) { setUniformMatrix4f(var.c_str(), mat); }
 
 	class CompileError : public std::runtime_error
 	{

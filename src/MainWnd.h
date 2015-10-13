@@ -35,7 +35,9 @@
 #include "Shader.h"
 #include "Container.h"
 #include "Camera.h"
-#include "Light.h"
+#include "DirectionalLight.h"
+#include "PointLight.h"
+#include "SpotLight.h"
 
 class MainWnd final
 {
@@ -50,7 +52,9 @@ private:
 	glm::mat4 m_projection;
 	Camera m_camera;
 
-	Light m_light;
+	DirectionalLight m_dirLight;
+	PointLight m_ptLights[Shader::POINTLIGHT_COUNT];
+	SpotLight m_spLight;
 
 	double m_deltaTime;
 	int m_fps = 0;

@@ -78,7 +78,7 @@ void Shader::use()
 	pCurrentShader = this;
 }
 
-void Shader::setUniform1f(const char *var, float f)
+void Shader::setUniform1f(const char *var, GLfloat f)
 {
 	glUniform1f(findUniform(var), f);
 }

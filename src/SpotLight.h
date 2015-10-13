@@ -23,42 +23,37 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /**
- * @file pch.h
- * @date 2015. 9. 17.
+ * @file SpotLight.h
+ * @date 2015. 10. 13.
  * @author dlarudgus20
  * @copyright The BSD (2-Clause) License
  */
 
-#ifndef PCH_H_
-#define PCH_H_
+#ifndef SPOTLIGHT_H_
+#define SPOTLIGHT_H_
 
-#define GLEW_STATIC
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
+#include "Light.h"
 
-#include <iostream>
-#include <iomanip>
-#include <fstream>
-#include <sstream>
-#include <algorithm>
-#include <iterator>
-#include <string>
-#include <map>
-#include <memory>
-#include <exception>
-#include <stdexcept>
-#include <limits>
-#include <utility>
+class SpotLight : public Light
+{
+private:
+	glm::vec3 m_position, m_direction;
+	float m_innerCutOff, m_outerCutOff;
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <assert.h>
+public:
+	SpotLight();
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
+	void setPosition(const glm::vec3 &pos);
+	const glm::vec3 &getPosition() const;
 
-#include <SOIL.h>
+	void setDirection(const glm::vec3 &dir);
+	const glm::vec3 &getDirection() const;
 
-#endif /* PCH_H_ */
+	void setCutOff(float inner, float outer);
+	float getInnerCutOff() const;
+	float getOuterCutOff() const;
+
+	virtual void apply(const glm::mat4 &viewMatrix) const override;
+};
+
+#endif /* SPOTLIGHT_H_ */

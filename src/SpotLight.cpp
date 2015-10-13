@@ -23,47 +23,65 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /**
- * @file Light.cpp
+ * @file SpotLight.cpp
  * @date 2015. 10. 13.
  * @author dlarudgus20
  * @copyright The BSD (2-Clause) License
  */
 
 #include "pch.h"
-#include "Light.h"
+#include "SpotLight.h"
+#include "Shader.h"
 
-Light::Light()
-	: m_ambient(0.0f), m_diffuse(0.0f), m_specular(0.0f)
+SpotLight::SpotLight()
+	: m_position(0.0f, 0.0f, 0.0f), m_direction(1.0f, 0.0f, 0.0f)
+	, m_innerCutOff(0.976f /*std::cos(glm::radian(12.5f))*/)
+	, m_outerCutOff(0.954f /*std::cos(glm::radian(17.5f))*/)
 {
-}
-
-Light::~Light()
-{
-}
-
-void Light::setAmbient(const glm::vec3 &ambient)
-{
-	m_ambient = ambient;
-}
-const glm::vec3 &Light::getAmbient() const
-{
-	return m_ambient;
 }
 
-void Light::setDiffuse(const glm::vec3 &diffuse)
+void SpotLight::setPosition(const glm::vec3 &pos)
 {
-	m_diffuse = diffuse;
+	m_position = pos;
 }
-const glm::vec3 &Light::getDiffuse() const
+const glm::vec3 &SpotLight::getPosition() const
 {
-	return m_diffuse;
+	return m_position;
 }
 
-void Light::setSpecular(const glm::vec3 &specular)
+void SpotLight::setDirection(const glm::vec3 &dir)
 {
-	m_specular = specular;
+	m_direction = dir;
 }
-const glm::vec3 &Light::getSpecular() const
+const glm::vec3 &SpotLight::getDirection() const
 {
-	return m_specular;
+	return m_direction;
+}
+
+void SpotLight::setCutOff(float inner, float outer)
+{
+	m_innerCutOff = inner;
+	m_outerCutOff = outer;
+}
+float SpotLight::getInnerCutOff() const
+{
+	return m_innerCutOff;
+}
+float SpotLight::getOuterCutOff() const
+{
+	return m_outerCutOff;
+}
+
+void SpotLight::apply(const glm::mat4 &viewMatrix) const
+{
+	glm::vec3 pos = glm::vec3(viewMatrix * glm::vec4(m_position, 1.0f));
+	glm::vec3 dir = glm::vec3(viewMatrix * glm::vec4(m_direction, 0.0f));
+	Shader *pShader = Shader::getCurrentShader();
+	pShader->setUniform3f("spLight.position", pos);
+	pShader->setUniform3f("spLight.direction", dir);
+	pShader->setUniform1f("spLight.innerCutOff", m_innerCutOff);
+	pShader->setUniform1f("spLight.outerCutOff", m_outerCutOff);
+	pShader->setUniform3f("spLight.ambient", m_ambient);
+	pShader->setUniform3f("spLight.diffuse", m_diffuse);
+	pShader->setUniform3f("spLight.specular", m_specular);
 }

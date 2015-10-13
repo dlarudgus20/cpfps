@@ -23,42 +23,36 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /**
- * @file pch.h
- * @date 2015. 9. 17.
+ * @file DirectionalLight.cpp
+ * @date 2015. 10. 13.
  * @author dlarudgus20
  * @copyright The BSD (2-Clause) License
  */
 
-#ifndef PCH_H_
-#define PCH_H_
+#include "pch.h"
+#include "DirectionalLight.h"
+#include "Shader.h"
 
-#define GLEW_STATIC
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
+DirectionalLight::DirectionalLight()
+	: m_direction(1.0f, 0.0f, 0.0f)
+{
+}
 
-#include <iostream>
-#include <iomanip>
-#include <fstream>
-#include <sstream>
-#include <algorithm>
-#include <iterator>
-#include <string>
-#include <map>
-#include <memory>
-#include <exception>
-#include <stdexcept>
-#include <limits>
-#include <utility>
+void DirectionalLight::setDirection(const glm::vec3 &dir)
+{
+	m_direction = dir;
+}
+const glm::vec3 &DirectionalLight::getDirection() const
+{
+	return m_direction;
+}
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <assert.h>
-
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
-#include <SOIL.h>
-
-#endif /* PCH_H_ */
+void DirectionalLight::apply(const glm::mat4 &viewMatrix) const
+{
+	glm::vec3 dir = glm::vec3(viewMatrix * glm::vec4(m_direction, 0.0f));
+	Shader *pShader = Shader::getCurrentShader();
+	pShader->setUniform3f("dirLight.direction", dir);
+	pShader->setUniform3f("dirLight.ambient", m_ambient);
+	pShader->setUniform3f("dirLight.diffuse", m_diffuse);
+	pShader->setUniform3f("dirLight.specular", m_specular);
+}

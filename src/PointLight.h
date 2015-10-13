@@ -23,42 +23,39 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /**
- * @file pch.h
- * @date 2015. 9. 17.
+ * @file Light.h
+ * @date 2015. 9. 25.
  * @author dlarudgus20
  * @copyright The BSD (2-Clause) License
  */
 
-#ifndef PCH_H_
-#define PCH_H_
+#ifndef POINTLIGHT_H_
+#define POINTLIGHT_H_
 
-#define GLEW_STATIC
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
+#include "Light.h"
 
-#include <iostream>
-#include <iomanip>
-#include <fstream>
-#include <sstream>
-#include <algorithm>
-#include <iterator>
-#include <string>
-#include <map>
-#include <memory>
-#include <exception>
-#include <stdexcept>
-#include <limits>
-#include <utility>
+class PointLight : public Light
+{
+private:
+	int m_index;
+	glm::vec3 m_position;
+	float m_attenuationConstant, m_attenuationLinear, m_attenuationQuadratic;
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <assert.h>
+public:
+	PointLight();
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
+	void setIndex(int i);
+	int getIndex() const;
 
-#include <SOIL.h>
+	void setPosition(const glm::vec3 &pos);
+	const glm::vec3 &getPosition() const;
 
-#endif /* PCH_H_ */
+	void setAttenuation(float constant, float linear, float quadratic);
+	float getAttenuationConstant() const;
+	float getAttenuationLinear() const;
+	float getAttenuationQuadratic() const;
+
+	virtual void apply(const glm::mat4 &viewMatrix) const override;
+};
+
+#endif /* POINTLIGHT_H_ */
