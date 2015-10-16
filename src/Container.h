@@ -38,7 +38,7 @@ class Shader;
 class Container
 {
 private:
-	GLuint m_vbo, m_vao;
+	GLuint m_vbo = 0, m_vao = 0;
 	Material m_material;
 
 public:

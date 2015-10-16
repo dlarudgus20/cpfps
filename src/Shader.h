@@ -40,8 +40,8 @@ public:
 	static Shader *getCurrentShader();
 
 private:
-	GLuint m_vertexShader, m_fragmentShader;
-	GLuint m_shaderProgram;
+	GLuint m_vertexShader = 0, m_fragmentShader = 0;
+	GLuint m_shaderProgram = 0;
 
 public:
 	Shader();

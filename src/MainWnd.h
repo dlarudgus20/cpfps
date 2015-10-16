@@ -56,11 +56,11 @@ private:
 	PointLight m_ptLights[Shader::POINTLIGHT_COUNT];
 	SpotLight m_spLight;
 
-	double m_deltaTime;
+	double m_deltaTime = 0.0;
 	int m_fps = 0;
 
 	bool m_isFirstMouse = true;
-	float m_prevMouseX, m_prevMouseY;
+	float m_prevMouseX = 0.0f, m_prevMouseY = 0.0f;
 
 	Container m_container;
 
