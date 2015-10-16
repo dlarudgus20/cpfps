@@ -89,6 +89,7 @@ uniform mat3 NormalMatrix;
 vec3 calcDirectionalLight();
 vec3 calcPointLight(int idx);
 vec3 calcSpotLight();
+vec3 calcPhongLighting(vec3 lightDir, vec3 ambientLight, vec3 diffuseLight, vec3 specularLight);
 
 void main()
 {
@@ -104,31 +105,13 @@ void main()
 
 vec3 calcDirectionalLight()
 {
-	vec3 diffmap = texture(material.diffuseMap, fragTexCoord).xyz;
-	vec3 specmap = texture(material.specularMap, fragTexCoord).xyz;
-
-	vec3 norm = NormalMatrix * normalize(fragNormal);
 	vec3 lightDir = normalize(-dirLight.direction);
-
-	vec3 ambient = diffmap * dirLight.ambient;
-
-	float diff = max(dot(norm, lightDir), 0.0f);
-	vec3 diffuse = diff * diffmap * dirLight.diffuse;
-
-	vec3 viewDir = normalize(-fragPos);
-	vec3 reflectDir = reflect(-lightDir, norm);
-	float spec = pow(max(dot(viewDir, reflectDir), 0.0f), material.shininess);
-	vec3 specular = spec * specmap * dirLight.specular;
 	
-	return ambient + diffuse + specular;
+	return calcPhongLighting(lightDir, dirLight.ambient, dirLight.diffuse, dirLight.specular);
 }
 
 vec3 calcPointLight(int idx)
 {
-	vec3 diffmap = texture(material.diffuseMap, fragTexCoord).xyz;
-	vec3 specmap = texture(material.specularMap, fragTexCoord).xyz;
-
-	vec3 norm = NormalMatrix * normalize(fragNormal);
 	vec3 lightDir = normalize(ptLights[idx].position - fragPos);
 
 	float dist = length(ptLights[idx].position - fragPos);
@@ -136,41 +119,37 @@ vec3 calcPointLight(int idx)
 	float linear = ptLights[idx].linear;
 	float quadratic = ptLights[idx].quadratic;
 	float attenuation = 1.0f / (constant + linear * dist + quadratic * (dist * dist));
-
-	vec3 ambient = diffmap * ptLights[idx].ambient;
-
-	float diff = max(dot(norm, lightDir), 0.0f);
-	vec3 diffuse = diff * diffmap * ptLights[idx].diffuse;
-
-	vec3 viewDir = normalize(-fragPos);
-	vec3 reflectDir = reflect(-lightDir, norm);
-	float spec = pow(max(dot(viewDir, reflectDir), 0.0f), material.shininess);
-	vec3 specular = spec * specmap * ptLights[idx].specular;
-
-	return (ambient + diffuse + specular) * attenuation;
+	
+	return calcPhongLighting(lightDir, ptLights[idx].ambient, ptLights[idx].diffuse, ptLights[idx].specular) * attenuation;
 }
 
 vec3 calcSpotLight()
 {
-	vec3 diffmap = texture(material.diffuseMap, fragTexCoord).xyz;
-	vec3 specmap = texture(material.specularMap, fragTexCoord).xyz;
-
-	vec3 norm = NormalMatrix * normalize(fragNormal);
 	vec3 lightDir = normalize(spLight.position - fragPos);
 
 	float c_theta = dot(lightDir, normalize(-spLight.direction));
 	float epsilon = spLight.innerCutOff - spLight.outerCutOff;
 	float intensity = clamp((c_theta - spLight.outerCutOff) / epsilon, 0.0f, 1.0f);
+	
+	return calcPhongLighting(lightDir, spLight.ambient, spLight.diffuse, spLight.specular) * intensity;
+}
 
-	vec3 ambient = diffmap * spLight.ambient;
+vec3 calcPhongLighting(vec3 lightDir, vec3 ambientLight, vec3 diffuseLight, vec3 specularLight)
+{
+	vec3 diffmap = texture(material.diffuseMap, fragTexCoord).xyz;
+	vec3 specmap = texture(material.specularMap, fragTexCoord).xyz;
+
+	vec3 norm = NormalMatrix * normalize(fragNormal);
+
+	vec3 ambient = diffmap * ambientLight;
 
 	float diff = max(dot(norm, lightDir), 0.0f);
-	vec3 diffuse = diff * diffmap * spLight.diffuse;
+	vec3 diffuse = diff * diffmap * diffuseLight;
 
 	vec3 viewDir = normalize(-fragPos);
 	vec3 reflectDir = reflect(-lightDir, norm);
 	float spec = pow(max(dot(viewDir, reflectDir), 0.0f), material.shininess);
-	vec3 specular = spec * specmap * spLight.specular;
+	vec3 specular = spec * specmap * specularLight;
 
-	return (ambient + diffuse + specular) * intensity;
+	return ambient + diffuse + specular;
 }
