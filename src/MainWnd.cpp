@@ -195,16 +195,16 @@ bool MainWnd::initialize()
 		return false;
 	}
 
-	m_dirLight.setDirection({ -2.0f, -1.0f, -1.2f });
-	m_dirLight.setAmbient({ 0.1f, 0.1f, 0.1f });
-	m_dirLight.setDiffuse({ 0.3f, 0.3f, 0.3f });
-	m_dirLight.setSpecular({ 0.3f, 0.3f, 0.3f });
+	//m_dirLight.setDirection({ -2.0f, -1.0f, -1.2f });
+	//m_dirLight.setAmbient({ 0.1f, 0.1f, 0.1f });
+	//m_dirLight.setDiffuse({ 0.3f, 0.3f, 0.3f });
+	//m_dirLight.setSpecular({ 0.3f, 0.3f, 0.3f });
 
 	glm::vec3 ptLightPositions[] = {
+		{ 2.3f, -3.3f, -4.0f },
 		{ 0.7f,  0.2f,  2.0f },
 		{ -4.0f,  2.0f, -12.0f },
 		{ 0.0f,  0.0f, -3.0f },
-		{ 1.0f, -1.5f, 0.4f }
 	};
 	for (int i = 0; i < Shader::POINTLIGHT_COUNT; ++i)
 	{
@@ -213,15 +213,15 @@ bool MainWnd::initialize()
 		m_ptLights[i].setAmbient({ 0.1f, 0.1f, 0.1f });
 		m_ptLights[i].setDiffuse({ 1.0f, 1.0f, 1.0f });
 		m_ptLights[i].setSpecular({ 1.0f, 1.0f, 1.0f });
-		m_ptLights[i].setAttenuation(1.0f, 0.14f, 0.07f);
+		m_ptLights[i].setAttenuation(1.0f, 0.14f * 0.4, 0.07f * 0.4);
 	}
 
-	m_spLight.setPosition({ 2.3f, -3.3f, -4.0f });
-	m_spLight.setDirection({ -2.3f, 3.3f, 4.0f });
-	m_spLight.setAmbient({ 0.1f, 0.1f, 0.1f });
-	m_spLight.setDiffuse({ 1.0f, 1.0f, 1.0f });
-	m_spLight.setSpecular({ 1.0f, 1.0f, 1.0f });
-	m_spLight.setCutOff(std::cos(glm::radians(12.5f)), std::cos(glm::radians(17.5f)));
+	//m_spLight.setPosition({ 2.3f, -3.3f, -4.0f });
+	//m_spLight.setDirection({ -2.3f, 3.3f, 4.0f });
+	//m_spLight.setAmbient({ 0.1f, 0.1f, 0.1f });
+	//m_spLight.setDiffuse({ 1.0f, 1.0f, 1.0f });
+	//m_spLight.setSpecular({ 1.0f, 1.0f, 1.0f });
+	//m_spLight.setCutOff(std::cos(glm::radians(12.5f)), std::cos(glm::radians(17.5f)));
 
 	m_container.initialize();
 
@@ -268,6 +268,19 @@ void MainWnd::render()
 		glm::mat4 prevMat = vmMatrix;
 		vmMatrix = glm::translate(vmMatrix, cubePositions[i]);
 		vmMatrix = glm::rotate(vmMatrix, angle, glm::vec3(1.0f, 0.3f, 0.5f));
+		calcNormalMat();
+
+		m_shader.setUniformMatrix4f("vmMatrix", vmMatrix);
+		m_shader.setUniformMatrix3f("NormalMatrix", normalMatrix);
+		m_container.draw();
+
+		vmMatrix = prevMat;
+	}
+
+	{
+		glm::mat4 prevMat = vmMatrix;
+		vmMatrix = glm::translate(vmMatrix, { 0.0f, -9.0f, 0.0f });
+		vmMatrix = glm::scale(vmMatrix, { 10.0f, 10.0f, 10.0f });
 		calcNormalMat();
 
 		m_shader.setUniformMatrix4f("vmMatrix", vmMatrix);
