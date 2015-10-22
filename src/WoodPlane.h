@@ -23,72 +23,27 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /**
- * @file MainWnd.h
- * @date 2015. 9. 17.
+ * @file WoodPlane.h
+ * @date 2015. 10. 22.
  * @author dlarudgus20
  * @copyright The BSD (2-Clause) License
  */
 
-#ifndef MAINWND_H_
-#define MAINWND_H_
+#ifndef WOODPLANE_H_
+#define WOODPLANE_H_
 
-#include "Shader.h"
-
-#include "DirectionalLight.h"
-#include "PointLight.h"
-#include "SpotLight.h"
-
-#include "Camera.h"
-
-#include "Container.h"
-#include "WoodPlane.h"
-
-class MainWnd final
+class WoodPlane
 {
-public:
-	static std::unique_ptr<MainWnd> createInstance();
-
 private:
-	GLFWwindow *m_wnd;
+	GLuint m_vbo = 0, m_vao = 0;
+	Material m_material;
 
-	Shader m_shader, m_shaderNolight;
-
-	DirectionalLight m_dirLight;
-	PointLight m_ptLights[Shader::POINTLIGHT_COUNT];
-	SpotLight m_spLight;
-
-	glm::mat4 m_projection;
-	Camera m_camera;
-
-	double m_deltaTime = 0.0;
-	int m_fps = 0;
-
-	bool m_isFirstMouse = true;
-	float m_prevMouseX = 0.0f, m_prevMouseY = 0.0f;
-
-	Container m_container;
-	WoodPlane m_woodplane;
-
-	MainWnd();
 public:
-	~MainWnd();
+	WoodPlane();
+	~WoodPlane();
 
-	bool create();
-
-	bool initialize();
-	void loop();
-	void loopManualFPS();
-
-private:
-	void initCallback();
-	void render();
-	void idle();
-
-	void calcProjection(int width, int height);
-
-	void onMouseCursorPos(double xpos, double ypos);
-	void onFrameBufferSize(int width, int height);
-	void onWindowClose();
+	void initialize();
+	void draw(bool bUseMaterial = true);
 };
 
-#endif /* MAINWND_H_ */
+#endif /* WOODPLANE_H_ */

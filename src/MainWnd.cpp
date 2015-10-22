@@ -202,25 +202,25 @@ bool MainWnd::initialize()
 		return false;
 	}
 
-	//m_dirLight.setDirection({ -2.0f, -1.0f, -1.2f });
-	//m_dirLight.setAmbient({ 0.1f, 0.1f, 0.1f });
-	//m_dirLight.setDiffuse({ 0.3f, 0.3f, 0.3f });
-	//m_dirLight.setSpecular({ 0.3f, 0.3f, 0.3f });
+	m_dirLight.setDirection({ -2.0f, -1.0f, -1.2f });
+	m_dirLight.setAmbient({ 0.1f, 0.1f, 0.1f });
+	m_dirLight.setDiffuse({ 1.0f, 1.0f, 1.0f });
+	m_dirLight.setSpecular({ 1.0f, 1.0f, 1.0f });
 
-	glm::vec3 ptLightPositions[] = {
-		{ 2.3f, -3.3f, -4.0f },
-		{ 0.7f,  0.2f,  2.0f },
-		{ -4.0f,  2.0f, -12.0f },
-		{ 0.0f,  0.0f, -3.0f },
-	};
+	//glm::vec3 ptLightPositions[] = {
+	//	{ 2.3f, -3.3f, -4.0f },
+	//	{ 0.7f,  0.2f,  2.0f },
+	//	{ -4.0f,  2.0f, -12.0f },
+	//	{ 0.0f,  0.0f, -3.0f },
+	//};
 	for (int i = 0; i < Shader::POINTLIGHT_COUNT; ++i)
 	{
 		m_ptLights[i].setIndex(i);
-		m_ptLights[i].setPosition(ptLightPositions[i]);
-		m_ptLights[i].setAmbient({ 0.1f, 0.1f, 0.1f });
-		m_ptLights[i].setDiffuse({ 1.0f, 1.0f, 1.0f });
-		m_ptLights[i].setSpecular({ 1.0f, 1.0f, 1.0f });
-		m_ptLights[i].setAttenuation(1.0f, 0.14f * 0.4, 0.07f * 0.4);
+		//m_ptLights[i].setPosition(ptLightPositions[i]);
+		//m_ptLights[i].setAmbient({ 0.1f, 0.1f, 0.1f });
+		//m_ptLights[i].setDiffuse({ 1.0f, 1.0f, 1.0f });
+		//m_ptLights[i].setSpecular({ 1.0f, 1.0f, 1.0f });
+		//m_ptLights[i].setAttenuation(1.0f, 0.14f * 0.4, 0.07f * 0.4);
 	}
 
 	//m_spLight.setPosition({ 2.3f, -3.3f, -4.0f });
@@ -231,6 +231,7 @@ bool MainWnd::initialize()
 	//m_spLight.setCutOff(std::cos(glm::radians(12.5f)), std::cos(glm::radians(17.5f)));
 
 	m_container.initialize();
+	m_woodplane.initialize();
 
 	return true;
 }
@@ -248,7 +249,11 @@ void MainWnd::render()
 	};
 	calcNormalMat();
 
-	glm::vec3 cubePositions[] = {
+	m_shader.use();
+	m_shader.setUniformMatrix4f("projMatrix", m_projection);
+	m_dirLight.apply(m_camera.getMatrix());
+
+	/*glm::vec3 cubePositions[] = {
 		{ 0.0f,  0.0f,  0.0f },
 		{ 2.0f,  5.0f, -15.0f },
 		{ -1.5f, -2.2f, -2.5f },
@@ -295,9 +300,9 @@ void MainWnd::render()
 		m_container.draw();
 
 		vmMatrix = prevMat;
-	}
+	}*/
 
-	m_shaderNolight.use();
+	/*m_shaderNolight.use();
 	m_shader.setUniformMatrix4f("projMatrix", m_projection);
 
 	// point light
@@ -322,7 +327,7 @@ void MainWnd::render()
 		m_container.draw(false);
 
 		vmMatrix = prevMat;
-	}
+	}*/
 
 	glfwSwapBuffers(m_wnd);
 }
