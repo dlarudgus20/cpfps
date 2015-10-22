@@ -58,8 +58,8 @@ Shader::~Shader()
 
 void Shader::compile(const char *vertex, const char *fragment)
 {
-	m_vertexShader = loadFile(vertex, GL_VERTEX_SHADER);
-	m_fragmentShader = loadFile(fragment, GL_FRAGMENT_SHADER);
+	m_vertexShader = loadFile(vertex, GL_VERTEX_SHADER, m_vsInfoString);
+	m_fragmentShader = loadFile(fragment, GL_FRAGMENT_SHADER, m_fsInfoString);
 
 	m_shaderProgram = glCreateProgram();
 	glAttachShader(m_shaderProgram, m_vertexShader);
@@ -116,7 +116,7 @@ GLint Shader::findUniform(const char *var)
 	return loc;
 }
 
-GLuint Shader::loadFile(const char *filename, GLuint shaderType)
+GLuint Shader::loadFile(const char *filename, GLuint shaderType, std::string &infoString)
 {
 	try
 	{
@@ -136,19 +136,21 @@ GLuint Shader::loadFile(const char *filename, GLuint shaderType)
 		GLint success;
 		glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
 
+		GLint size;
+		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &size);
+		std::string info(size, '\0');
+		glGetShaderInfoLog(shader, size, nullptr, &info[0]);
+		if (info.size() > 0)
+			info.erase(info.end() - 1);
+
+		infoString = info;
+
 		if (success)
 		{
 			return shader;
 		}
 		else
 		{
-			GLint size;
-			glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &size);
-			std::string info(size, '\0');
-			glGetShaderInfoLog(shader, size, nullptr, &info[0]);
-			if (info.size() > 0)
-				info.erase(info.end() - 1);
-
 			throw CompileError("[" + std::string(filename) + "] : " + info);
 		}
 	}

@@ -35,9 +35,12 @@ layout(location = 0) in vec3 position;
 layout(location = 1) in vec3 normal;
 layout(location = 2) in vec2 texCoord;
 
-out vec2 fragTexCoord;
-out vec3 fragNormal;
-out vec3 fragPos;
+out VS_OUT
+{
+	vec2 fragTexCoord;
+	vec3 fragNormal;
+	vec3 fragPos;
+} vs_out;
 
 uniform mat4 projMatrix;
 uniform mat4 vmMatrix;
@@ -46,9 +49,9 @@ void main()
 {
 	vec4 pos = vec4(position, 1.0f);
 
-	fragTexCoord = vec2(texCoord.x, 1 - texCoord.y);
-	fragNormal = normal;
-	fragPos = vec3(vmMatrix * pos);
+	vs_out.fragTexCoord = vec2(texCoord.x, 1 - texCoord.y);
+	vs_out.fragNormal = normal;
+	vs_out.fragPos = vec3(vmMatrix * pos);
 
 	gl_Position = projMatrix * vmMatrix * pos;
 }

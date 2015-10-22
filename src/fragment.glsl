@@ -72,9 +72,12 @@ struct SpotLight
 	vec3 specular;
 };
 
-in vec2 fragTexCoord;
-in vec3 fragNormal;
-in vec3 fragPos;
+in VS_OUT
+{
+	vec2 fragTexCoord;
+	vec3 fragNormal;
+	vec3 fragPos;
+} vs_out;
 
 out vec4 color;
 
@@ -112,9 +115,9 @@ vec3 calcDirectionalLight()
 
 vec3 calcPointLight(int idx)
 {
-	vec3 lightDir = normalize(ptLights[idx].position - fragPos);
+	vec3 lightDir = normalize(ptLights[idx].position - vs_out.fragPos);
 
-	float dist = length(ptLights[idx].position - fragPos);
+	float dist = length(ptLights[idx].position - vs_out.fragPos);
 	float constant = ptLights[idx].constant;
 	float linear = ptLights[idx].linear;
 	float quadratic = ptLights[idx].quadratic;
@@ -125,7 +128,7 @@ vec3 calcPointLight(int idx)
 
 vec3 calcSpotLight()
 {
-	vec3 lightDir = normalize(spLight.position - fragPos);
+	vec3 lightDir = normalize(spLight.position - vs_out.fragPos);
 
 	float c_theta = dot(lightDir, normalize(-spLight.direction));
 	float epsilon = spLight.innerCutOff - spLight.outerCutOff;
@@ -136,17 +139,17 @@ vec3 calcSpotLight()
 
 vec3 calcPhongLighting(vec3 lightDir, vec3 ambientLight, vec3 diffuseLight, vec3 specularLight)
 {
-	vec3 diffmap = texture(material.diffuseMap, fragTexCoord).xyz;
-	vec3 specmap = texture(material.specularMap, fragTexCoord).xyz;
+	vec3 diffmap = texture(material.diffuseMap, vs_out.fragTexCoord).xyz;
+	vec3 specmap = texture(material.specularMap, vs_out.fragTexCoord).xyz;
 
-	vec3 norm = NormalMatrix * normalize(fragNormal);
+	vec3 norm = NormalMatrix * normalize(vs_out.fragNormal);
 
 	vec3 ambient = diffmap * ambientLight;
 
 	float diff = max(dot(norm, lightDir), 0.0f);
 	vec3 diffuse = diff * diffmap * diffuseLight;
 
-	vec3 viewDir = normalize(-fragPos);
+	vec3 viewDir = normalize(-vs_out.fragPos);
 	vec3 reflectDir = reflect(-lightDir, norm);
 	float spec = pow(max(dot(viewDir, reflectDir), 0.0f), material.shininess);
 	vec3 specular = spec * specmap * specularLight;

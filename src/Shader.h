@@ -43,12 +43,17 @@ private:
 	GLuint m_vertexShader = 0, m_fragmentShader = 0;
 	GLuint m_shaderProgram = 0;
 
+	std::string m_vsInfoString, m_fsInfoString;
+
 public:
 	Shader();
 	~Shader();
 
 	void compile(const char *vertex, const char *fragment);
 	void use();
+
+	const std::string &getVSInfoString() { return m_vsInfoString; }
+	const std::string &getFSInfoString() { return m_fsInfoString; }
 
 	void setUniform1f(const char *var, GLfloat f);
 	void setUniform1f(const std::string &var, GLfloat f) { setUniform1f(var.c_str(), f); }
@@ -85,7 +90,7 @@ public:
 private:
 	GLint findUniform(const char *var);
 
-	static GLuint loadFile(const char *filename, GLuint kind);
+	static GLuint loadFile(const char *filename, GLuint kind, std::string &infoString);
 };
 
 #endif /* SHADER_H_ */
