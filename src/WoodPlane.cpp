@@ -46,14 +46,17 @@ namespace
 		-25.0f, -0.5f, -25.0f,	0.0f, 1.0f, 0.0f,	0.0f, 25.0f
 	};
 	GLsizei strides = 8 * sizeof(GLfloat);
+
+	const std::shared_ptr<Texture> &getTexture()
+	{
+		static auto obj = std::make_shared<Texture>("res/wood.png", Texture::Parameter::getDefault());
+		return obj;
+	}
 }
 
 WoodPlane::WoodPlane()
+	: m_material(getTexture(), getTexture(), 32.0f)
 {
-	auto pTexture = std::make_shared<Texture>("res/wood.png", Texture::Parameter::getDefault());
-
-	m_material.initialize(pTexture, pTexture, 32.0f);
-
 	glGenVertexArrays(1, &m_vao);
 	glGenBuffers(1, &m_vbo);
 

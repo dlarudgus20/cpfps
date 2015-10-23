@@ -80,15 +80,22 @@ namespace
 		-0.5f, 0.5f, -0.5f,		0.0f, 1.0f, 0.0f,	0.0f, 1.0f,
 	};
 	GLsizei strides = 8 * sizeof(GLfloat);
+
+	const std::shared_ptr<Texture> &getDiffuseMap()
+	{
+		static auto obj = std::make_shared<Texture>("res/container2.png", Texture::Parameter::getDefault());
+		return obj;
+	}
+	const std::shared_ptr<Texture> &getSpecularMap()
+	{
+		static auto obj = std::make_shared<Texture>("res/container2_specular.png", Texture::Parameter::getDefault());
+		return obj;
+	}
 }
 
 Container::Container()
+	: m_material(getDiffuseMap(), getSpecularMap(), 32.0f)
 {
-	m_material.initialize(
-		std::make_shared<Texture>("res/container2.png", Texture::Parameter::getDefault()),
-		std::make_shared<Texture>("res/container2_specular.png", Texture::Parameter::getDefault()),
-		32.0f);
-
 	glGenVertexArrays(1, &m_vao);
 	glGenBuffers(1, &m_vbo);
 

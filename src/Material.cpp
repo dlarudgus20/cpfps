@@ -33,19 +33,14 @@
 #include "Material.h"
 #include "Shader.h"
 
-Material::Material()
+Material::Material(std::shared_ptr<Texture> diffuseMap, std::shared_ptr<Texture> specularMap, float shininess)
+	: m_diffuseMap(std::move(diffuseMap)), m_specularMap(std::move(specularMap))
+	, m_shininess(shininess)
 {
 }
 
 Material::~Material()
 {
-}
-
-void Material::initialize(std::shared_ptr<Texture> diffuseMap, std::shared_ptr<Texture> specularMap, float shininess)
-{
-	m_diffuseMap = std::move(diffuseMap);
-	m_specularMap = std::move(specularMap);
-	m_shininess = shininess;
 }
 
 void Material::apply() const

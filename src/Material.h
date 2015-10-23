@@ -39,13 +39,10 @@ class Material
 private:
 	std::shared_ptr<Texture> m_diffuseMap, m_specularMap;
 	float m_shininess;
-	bool m_bAutoFree;
 
 public:
-	Material();
+	explicit Material(std::shared_ptr<Texture> diffuseMap, std::shared_ptr<Texture> specularMap, float shininess);
 	~Material();
-
-	void initialize(std::shared_ptr<Texture> diffuseMap, std::shared_ptr<Texture> specularMap, float shininess);
 
 	void apply() const;
 	void unapply() const;
