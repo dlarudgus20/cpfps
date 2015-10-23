@@ -40,6 +40,7 @@
 
 namespace ext
 {
+	// make_unique
 	namespace detail
 	{
 		template <typename T>
@@ -71,6 +72,16 @@ namespace ext
 	}
 	template <typename T, typename... Args>
 	typename detail::unique_if<T>::known_bound make_unique(Args&&...) = delete;
+
+	// noncopyable
+	class noncopyable
+	{
+	private:
+		noncopyable(const noncopyable &) = delete;
+		noncopyable &operator =(const noncopyable &) = delete;
+	protected:
+		noncopyable() = default;
+	};
 }
 
 #endif /* EXT_H_ */

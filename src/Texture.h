@@ -32,13 +32,14 @@
 #ifndef TEXTURE_H_
 #define TEXTURE_H_
 
-class Texture
+class Texture : private ext::noncopyable
 {
 private:
 	GLuint m_texture;
 
 public:
 	static void bind(int idx, const Texture *pTexture);
+	static void bind(const Texture *pTexture);
 
 	class Parameter
 	{
@@ -64,8 +65,18 @@ public:
 		void apply() const;
 	};
 
+	Texture();
 	explicit Texture(const char *file, const Parameter &params);
+	explicit Texture(GLint level, GLint internalformat,
+		GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const void *pixels,
+		bool bGenMipmap, const Parameter &params);
 	~Texture();
+
+	Texture(Texture &&other);
+	Texture &operator =(Texture &&other);
+	void swap(Texture &other);
+
+	GLuint get() const;
 
 	class LoadError : public std::runtime_error
 	{

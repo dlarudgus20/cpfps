@@ -23,16 +23,32 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /**
- * @file Scene.cpp
+ * @file ShadowMap.h
  * @date 2015. 10. 23.
  * @author dlarudgus20
  * @copyright The BSD (2-Clause) License
  */
 
-#include "pch.h"
-#include "ext.h"
-#include "Scene.h"
+#ifndef SHADOWMAP_H_
+#define SHADOWMAP_H_
 
-Scene::~Scene()
+#include "Texture.h"
+
+class Scene;
+
+class ShadowMap
 {
-}
+private:
+	GLuint m_depthMapFBO;
+	Texture m_depthMap;
+
+	glm::mat4 m_lightProjection, m_lightView;
+
+public:
+	ShadowMap();
+
+	void calcProjection(float fovy, float aspect, float zNear, float zFar);
+	void renderScene(Scene *pScene, GLsizei width, GLsizei height, const glm::mat4 &viewMatrix) const;
+};
+
+#endif /* SHADOWMAP_H_ */

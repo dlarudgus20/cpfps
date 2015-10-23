@@ -30,6 +30,7 @@
  */
 
 #include "pch.h"
+#include "ext.h"
 #include "SpotLight.h"
 #include "Shader.h"
 

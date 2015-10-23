@@ -30,15 +30,26 @@
  */
 
 #include "pch.h"
+#include "ext.h"
 #include "Texture.h"
 
 void Texture::bind(int idx, const Texture *pTexture)
 {
 	glActiveTexture(GL_TEXTURE0 + idx);
+	bind(pTexture);
+}
+void Texture::bind(const Texture *pTexture)
+{
 	if (pTexture != nullptr)
 		glBindTexture(GL_TEXTURE_2D, pTexture->m_texture);
 	else
 		glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+Texture::Texture()
+	: m_texture(0)
+{
+
 }
 
 Texture::Texture(const char *file, const Parameter &params)
@@ -63,9 +74,47 @@ Texture::Texture(const char *file, const Parameter &params)
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
+Texture::Texture(GLint level, GLint internalformat,
+	GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const void *pixels,
+	bool bGenMipmap, const Parameter &params)
+{
+	glGenTextures(1, &m_texture);
+	glBindTexture(GL_TEXTURE_2D, m_texture);
+	params.apply();
+	glTexImage2D(GL_TEXTURE_2D, level, internalformat, width, height, border, format, type, pixels);
+	if (bGenMipmap)
+		glGenerateMipmap(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
 Texture::~Texture()
 {
-	glDeleteTextures(1, &m_texture);
+	if (m_texture != 0)
+	{
+		glDeleteTextures(1, &m_texture);
+	}
+}
+
+Texture::Texture(Texture &&other)
+	: m_texture(other.m_texture)
+{
+	other.m_texture = 0;
+}
+Texture &Texture::operator =(Texture &&other)
+{
+	Texture().swap(*this);
+	m_texture = other.m_texture;
+	other.m_texture = 0;
+	return *this;
+}
+void Texture::swap(Texture &other)
+{
+	std::swap(m_texture, other.m_texture);
+}
+
+GLuint Texture::get() const
+{
+	return m_texture;
 }
 
 Texture::Parameter Texture::Parameter::getDefault()
