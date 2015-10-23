@@ -140,8 +140,12 @@ GLuint Shader::loadFile(const char *filename, GLuint shaderType, std::string &in
 		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &size);
 		std::string info(size, '\0');
 		glGetShaderInfoLog(shader, size, nullptr, &info[0]);
-		if (info.size() > 0)
-			info.erase(info.end() - 1);
+
+		// trim
+		info.erase(
+			std::find_if(info.rbegin(), info.rend(),
+				[](char c) { return !(isspace(c) || iscntrl(c)); }).base(),
+			info.end());
 
 		infoString = info;
 

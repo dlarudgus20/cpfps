@@ -23,44 +23,54 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /**
- * @file pch.h
- * @date 2015. 9. 17.
+ * @file ext.h
+ * @date 2015. 10. 23.
  * @author dlarudgus20
  * @copyright The BSD (2-Clause) License
  */
 
-#ifndef PCH_H_
-#define PCH_H_
 
-#define GLEW_STATIC
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
+#ifndef EXT_H_
+#define EXT_H_
 
-#include <iostream>
-#include <iomanip>
-#include <fstream>
-#include <sstream>
-#include <algorithm>
-#include <iterator>
-#include <string>
-#include <map>
+#include <cstddef>
 #include <memory>
-#include <exception>
-#include <stdexcept>
-#include <limits>
 #include <type_traits>
 #include <utility>
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <ctype.h>
-#include <math.h>
-#include <assert.h>
+namespace ext
+{
+	namespace detail
+	{
+		template <typename T>
+		struct unique_if
+		{
+			typedef std::unique_ptr<T> single_object;
+		};
+		template <typename T>
+		struct unique_if<T[]>
+		{
+			typedef std::unique_ptr<T[]> unknown_bound;
+		};
+		template <typename T, std::size_t N>
+		struct unique_if<T[N]>
+		{
+			typedef void known_bound;
+		};
+	}
+	template <typename T, typename... Args>
+	typename detail::unique_if<T>::single_object make_unique(Args&&... args)
+	{
+		return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
+	}
+	template <typename T>
+	typename detail::unique_if<T>::unknown_bound make_unique(size_t n)
+	{
+		typedef typename std::remove_extent<T>::type U;
+		return std::unique_ptr<T>(new U[n]);
+	}
+	template <typename T, typename... Args>
+	typename detail::unique_if<T>::known_bound make_unique(Args&&...) = delete;
+}
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
-#include <SOIL.h>
-
-#endif /* PCH_H_ */
+#endif /* EXT_H_ */

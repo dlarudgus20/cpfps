@@ -84,17 +84,6 @@ namespace
 
 Container::Container()
 {
-	// TODO Auto-generated constructor stub
-}
-
-Container::~Container()
-{
-	glDeleteVertexArrays(1, &m_vao);
-	glDeleteBuffers(1, &m_vbo);
-}
-
-void Container::initialize()
-{
 	m_material.initialize(
 		std::make_shared<Texture>("res/container2.png", Texture::Parameter::getDefault()),
 		std::make_shared<Texture>("res/container2_specular.png", Texture::Parameter::getDefault()),
@@ -120,7 +109,13 @@ void Container::initialize()
 	glBindVertexArray(0);
 }
 
-void Container::draw(bool bUseMaterial /* = true */)
+Container::~Container()
+{
+	glDeleteVertexArrays(1, &m_vao);
+	glDeleteBuffers(1, &m_vbo);
+}
+
+void Container::draw(bool bUseMaterial /* = true */) const
 {
 	if (bUseMaterial)
 		m_material.apply();

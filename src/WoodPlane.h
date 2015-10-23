@@ -32,6 +32,8 @@
 #ifndef WOODPLANE_H_
 #define WOODPLANE_H_
 
+#include "Material.h"
+
 class WoodPlane
 {
 private:
@@ -42,8 +44,7 @@ public:
 	WoodPlane();
 	~WoodPlane();
 
-	void initialize();
-	void draw(bool bUseMaterial = true);
+	void draw(bool bUseMaterial = true) const;
 };
 
 #endif /* WOODPLANE_H_ */

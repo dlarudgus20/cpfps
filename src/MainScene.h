@@ -23,44 +23,31 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /**
- * @file pch.h
- * @date 2015. 9. 17.
+ * @file MainScene.h
+ * @date 2015. 10. 23.
  * @author dlarudgus20
  * @copyright The BSD (2-Clause) License
  */
 
-#ifndef PCH_H_
-#define PCH_H_
+#ifndef MAINSCENE_H_
+#define MAINSCENE_H_
 
-#define GLEW_STATIC
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
+#include "Scene.h"
 
-#include <iostream>
-#include <iomanip>
-#include <fstream>
-#include <sstream>
-#include <algorithm>
-#include <iterator>
-#include <string>
-#include <map>
-#include <memory>
-#include <exception>
-#include <stdexcept>
-#include <limits>
-#include <type_traits>
-#include <utility>
+#include "Container.h"
+#include "WoodPlane.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <ctype.h>
-#include <math.h>
-#include <assert.h>
+class MainScene : public Scene
+{
+private:
+	Container m_container;
+	WoodPlane m_woodplane;
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
+public:
+	MainScene();
+	virtual ~MainScene();
 
-#include <SOIL.h>
+	virtual void render(const glm::mat4 &viewMatrix) const override;
+};
 
-#endif /* PCH_H_ */
+#endif /* MAINSCENE_H_ */

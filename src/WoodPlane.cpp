@@ -50,17 +50,6 @@ namespace
 
 WoodPlane::WoodPlane()
 {
-	// TODO Auto-generated constructor stub
-}
-
-WoodPlane::~WoodPlane()
-{
-	glDeleteVertexArrays(1, &m_vao);
-	glDeleteBuffers(1, &m_vbo);
-}
-
-void WoodPlane::initialize()
-{
 	auto pTexture = std::make_shared<Texture>("res/wood.png", Texture::Parameter::getDefault());
 
 	m_material.initialize(pTexture, pTexture, 32.0f);
@@ -85,7 +74,13 @@ void WoodPlane::initialize()
 	glBindVertexArray(0);
 }
 
-void WoodPlane::draw(bool bUseMaterial /* = true */)
+WoodPlane::~WoodPlane()
+{
+	glDeleteVertexArrays(1, &m_vao);
+	glDeleteBuffers(1, &m_vbo);
+}
+
+void WoodPlane::draw(bool bUseMaterial /* = true */) const
 {
 	if (bUseMaterial)
 		m_material.apply();

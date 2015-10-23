@@ -30,7 +30,9 @@
  */
 
 #include "pch.h"
+#include "ext.h"
 #include "MainWnd.h"
+#include "MainScene.h"
 
 const int MAINWND_WIDTH = 800;
 const int MAINWND_HEIGHT = 600;
@@ -186,26 +188,26 @@ bool MainWnd::initialize()
 
 	try
 	{
-		std::cout << "compile shader" << std::endl;
+		std::cout << "->compile shader" << std::endl;
 		m_shader.compile("src/vertex.glsl", "src/fragment.glsl");
-		std::cout << "vertex shader info: " << m_shader.getVSInfoString() << std::endl;
-		std::cout << "fragment shader info: " << m_shader.getFSInfoString() << std::endl;
+		std::cout << ">vertex shader info:\n" << m_shader.getVSInfoString() << std::endl;
+		std::cout << ">fragment shader info:\n" << m_shader.getFSInfoString() << std::endl;
 
-		std::cout << "compile shader (no light)" << std::endl;
+		std::cout << "->compile shader (no light)" << std::endl;
 		m_shaderNolight.compile("src/vertex.glsl", "src/frag_nolight.glsl");
-		std::cout << "vertex shader info: " << m_shader.getVSInfoString() << std::endl;
-		std::cout << "fragment shader info: " << m_shader.getFSInfoString() << std::endl;
+		std::cout << ">vertex shader info:\n" << m_shaderNolight.getVSInfoString() << std::endl;
+		std::cout << ">fragment shader info:\n" << m_shaderNolight.getFSInfoString() << std::endl;
 	}
 	catch (Shader::CompileError &e)
 	{
-		std::cerr << "[Shader::CompileError] " << e.what() << std::endl;
+		std::cerr << "##compile error##\n" << e.what() << std::endl;
 		return false;
 	}
 
-	m_dirLight.setDirection({ -2.0f, -1.0f, -1.2f });
-	m_dirLight.setAmbient({ 0.1f, 0.1f, 0.1f });
-	m_dirLight.setDiffuse({ 1.0f, 1.0f, 1.0f });
-	m_dirLight.setSpecular({ 1.0f, 1.0f, 1.0f });
+	//m_dirLight.setDirection({ -2.0f, -1.0f, -1.2f });
+	//m_dirLight.setAmbient({ 0.1f, 0.1f, 0.1f });
+	//m_dirLight.setDiffuse({ 1.0f, 1.0f, 1.0f });
+	//m_dirLight.setSpecular({ 1.0f, 1.0f, 1.0f });
 
 	//glm::vec3 ptLightPositions[] = {
 	//	{ 2.3f, -3.3f, -4.0f },
@@ -222,6 +224,11 @@ bool MainWnd::initialize()
 		//m_ptLights[i].setSpecular({ 1.0f, 1.0f, 1.0f });
 		//m_ptLights[i].setAttenuation(1.0f, 0.14f * 0.4, 0.07f * 0.4);
 	}
+	m_ptLights[0].setPosition({ -2.0f, 4.0f, -1.0f });
+	m_ptLights[0].setAmbient(glm::vec3(0.2f));
+	m_ptLights[0].setDiffuse(glm::vec3(1.0f));
+	m_ptLights[0].setSpecular(glm::vec3(0.0f));
+	m_ptLights[0].setAttenuation(1.0f, 0.0f, 0.0f);
 
 	//m_spLight.setPosition({ 2.3f, -3.3f, -4.0f });
 	//m_spLight.setDirection({ -2.3f, 3.3f, 4.0f });
@@ -230,8 +237,7 @@ bool MainWnd::initialize()
 	//m_spLight.setSpecular({ 1.0f, 1.0f, 1.0f });
 	//m_spLight.setCutOff(std::cos(glm::radians(12.5f)), std::cos(glm::radians(17.5f)));
 
-	m_container.initialize();
-	m_woodplane.initialize();
+	m_pScene = ext::make_unique<MainScene>();
 
 	return true;
 }
@@ -241,93 +247,15 @@ void MainWnd::render()
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glm::mat4 vmMatrix = m_camera.getMatrix();
-	glm::mat3 normalMatrix;
-
-	auto calcNormalMat = [&] {
-		normalMatrix = glm::mat3(glm::transpose(glm::inverse(vmMatrix)));
-	};
-	calcNormalMat();
-
 	m_shader.use();
 	m_shader.setUniformMatrix4f("projMatrix", m_projection);
-	m_dirLight.apply(m_camera.getMatrix());
 
-	/*glm::vec3 cubePositions[] = {
-		{ 0.0f,  0.0f,  0.0f },
-		{ 2.0f,  5.0f, -15.0f },
-		{ -1.5f, -2.2f, -2.5f },
-		{ -3.8f, -2.0f, -12.3f },
-		{ 2.4f, -0.4f, -3.5f },
-		{ -1.7f,  3.0f, -7.5f },
-		{ 1.3f, -2.0f, -2.5f },
-		{ 1.5f,  2.0f, -2.5f },
-		{ 1.5f,  0.2f, -1.5f },
-		{ -1.3f,  1.0f, -1.5f }
-	};
-
-	m_shader.use();
-	m_shader.setUniformMatrix4f("projMatrix", m_projection);
 	m_dirLight.apply(m_camera.getMatrix());
 	for (const auto &ptLight : m_ptLights)
 		ptLight.apply(m_camera.getMatrix());
 	m_spLight.apply(m_camera.getMatrix());
 
-	for (size_t i = 0; i < sizeof(cubePositions) / sizeof(cubePositions[0]); ++i)
-	{
-		float angle = glm::radians(20.f * i);
-
-		glm::mat4 prevMat = vmMatrix;
-		vmMatrix = glm::translate(vmMatrix, cubePositions[i]);
-		vmMatrix = glm::rotate(vmMatrix, angle, glm::vec3(1.0f, 0.3f, 0.5f));
-		calcNormalMat();
-
-		m_shader.setUniformMatrix4f("vmMatrix", vmMatrix);
-		m_shader.setUniformMatrix3f("NormalMatrix", normalMatrix);
-		m_container.draw();
-
-		vmMatrix = prevMat;
-	}
-
-	{
-		glm::mat4 prevMat = vmMatrix;
-		vmMatrix = glm::translate(vmMatrix, { 0.0f, -9.0f, 0.0f });
-		vmMatrix = glm::scale(vmMatrix, { 10.0f, 10.0f, 10.0f });
-		calcNormalMat();
-
-		m_shader.setUniformMatrix4f("vmMatrix", vmMatrix);
-		m_shader.setUniformMatrix3f("NormalMatrix", normalMatrix);
-		m_container.draw();
-
-		vmMatrix = prevMat;
-	}*/
-
-	/*m_shaderNolight.use();
-	m_shader.setUniformMatrix4f("projMatrix", m_projection);
-
-	// point light
-	for (int i = 0; i < Shader::POINTLIGHT_COUNT; ++i)
-	{
-		glm::mat4 prevMat = vmMatrix;
-		vmMatrix = glm::translate(vmMatrix, m_ptLights[i].getPosition());
-		vmMatrix = glm::scale(vmMatrix, glm::vec3(0.2f));
-
-		m_shaderNolight.setUniformMatrix4f("vmMatrix", vmMatrix);
-		m_container.draw(false);
-
-		vmMatrix = prevMat;
-	}
-	// spot light
-	{
-		glm::mat4 prevMat = vmMatrix;
-		vmMatrix = glm::translate(vmMatrix, m_spLight.getPosition());
-		vmMatrix = glm::scale(vmMatrix, glm::vec3(0.2f));
-
-		m_shaderNolight.setUniformMatrix4f("vmMatrix", vmMatrix);
-		m_container.draw(false);
-
-		vmMatrix = prevMat;
-	}*/
+	m_pScene->render(m_camera.getMatrix());
 
 	glfwSwapBuffers(m_wnd);
 }

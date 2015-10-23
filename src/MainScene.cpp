@@ -23,45 +23,70 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /**
- * @file Material.cpp
- * @date 2015. 9. 27.
+ * @file MainScene.cpp
+ * @date 2015. 10. 23.
  * @author dlarudgus20
  * @copyright The BSD (2-Clause) License
  */
 
 #include "pch.h"
-#include "Material.h"
+#include "MainScene.h"
 #include "Shader.h"
 
-Material::Material()
+MainScene::MainScene()
 {
+
 }
 
-Material::~Material()
+MainScene::~MainScene()
 {
+
 }
 
-void Material::initialize(std::shared_ptr<Texture> diffuseMap, std::shared_ptr<Texture> specularMap, float shininess)
-{
-	m_diffuseMap = std::move(diffuseMap);
-	m_specularMap = std::move(specularMap);
-	m_shininess = shininess;
-}
-
-void Material::apply() const
+void MainScene::render(const glm::mat4 &viewMatrix) const
 {
 	Shader *pShader = Shader::getCurrentShader();
 
-	Texture::bind(0, m_diffuseMap.get());
-	Texture::bind(1, m_specularMap.get());
+	glm::mat4 vmMatrix = viewMatrix;
+	glm::mat3 normalMatrix;
 
-	pShader->setUniform1i("material.diffuseMap", 0);
-	pShader->setUniform1i("material.specularMap", 1);
-	pShader->setUniform1f("material.shininess", m_shininess);
-}
+	auto calcNormalMat = [&] {
+		normalMatrix = glm::mat3(glm::transpose(glm::inverse(vmMatrix)));
+	};
+	calcNormalMat();
 
-void Material::unapply() const
-{
-	Texture::bind(0, nullptr);
-	Texture::bind(1, nullptr);
+	{
+		pShader->setUniformMatrix4f("vmMatrix", vmMatrix);
+		pShader->setUniformMatrix3f("NormalMatrix", normalMatrix);
+		m_woodplane.draw();
+	}
+	{
+		glm::mat4 prevMat = vmMatrix;
+		vmMatrix = glm::translate(vmMatrix, { 0.0f, 1.5f, 0.0f });
+		calcNormalMat();
+		pShader->setUniformMatrix4f("vmMatrix", vmMatrix);
+		pShader->setUniformMatrix3f("NormalMatrix", normalMatrix);
+		m_container.draw();
+		vmMatrix = prevMat;
+	}
+	{
+		glm::mat4 prevMat = vmMatrix;
+		vmMatrix = glm::translate(vmMatrix, { 2.0f, 0.0f, 1.0f });
+		calcNormalMat();
+		pShader->setUniformMatrix4f("vmMatrix", vmMatrix);
+		pShader->setUniformMatrix3f("NormalMatrix", normalMatrix);
+		m_container.draw();
+		vmMatrix = prevMat;
+	}
+	{
+		glm::mat4 prevMat = vmMatrix;
+		vmMatrix = glm::translate(vmMatrix, { -1.0f, 0.0f, 2.0f });
+		vmMatrix = glm::rotate(vmMatrix, glm::radians(60.0f), glm::normalize(glm::vec3(1.0f, 0.0f, 1.0f)));
+		vmMatrix = glm::scale(vmMatrix, glm::vec3(0.5f));
+		calcNormalMat();
+		pShader->setUniformMatrix4f("vmMatrix", vmMatrix);
+		pShader->setUniformMatrix3f("NormalMatrix", normalMatrix);
+		m_container.draw();
+		vmMatrix = prevMat;
+	}
 }

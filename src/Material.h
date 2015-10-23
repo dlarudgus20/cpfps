@@ -47,8 +47,8 @@ public:
 
 	void initialize(std::shared_ptr<Texture> diffuseMap, std::shared_ptr<Texture> specularMap, float shininess);
 
-	void apply();
-	void unapply();
+	void apply() const;
+	void unapply() const;
 };
 
 #endif /* MATERIAL_H_ */

@@ -40,8 +40,7 @@
 
 #include "Camera.h"
 
-#include "Container.h"
-#include "WoodPlane.h"
+class Scene;
 
 class MainWnd final
 {
@@ -66,8 +65,7 @@ private:
 	bool m_isFirstMouse = true;
 	float m_prevMouseX = 0.0f, m_prevMouseY = 0.0f;
 
-	Container m_container;
-	WoodPlane m_woodplane;
+	std::unique_ptr<Scene> m_pScene;
 
 	MainWnd();
 public:

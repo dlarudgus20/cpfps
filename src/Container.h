@@ -33,7 +33,6 @@
 #define CONTAINER_H_
 
 #include "Material.h"
-class Shader;
 
 class Container
 {
@@ -45,8 +44,7 @@ public:
 	Container();
 	~Container();
 
-	void initialize();
-	void draw(bool bUseMaterial = true);
+	void draw(bool bUseMaterial = true) const;
 };
 
 #endif /* CONTAINER_H_ */
