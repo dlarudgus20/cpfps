@@ -188,19 +188,10 @@ bool MainWnd::initialize()
 
 	try
 	{
-		std::cout << "->compile shader" << std::endl;
-		m_shader.compile("src/vertex.glsl", "src/fragment.glsl");
-		std::cout << ">vertex shader info:\n" << m_shader.getVSInfoString() << std::endl;
-		std::cout << ">fragment shader info:\n" << m_shader.getFSInfoString() << std::endl;
-
-		std::cout << "->compile shader (no light)" << std::endl;
-		m_shaderNolight.compile("src/vertex.glsl", "src/frag_nolight.glsl");
-		std::cout << ">vertex shader info:\n" << m_shaderNolight.getVSInfoString() << std::endl;
-		std::cout << ">fragment shader info:\n" << m_shaderNolight.getFSInfoString() << std::endl;
+		ShaderManager::getInstance().initialize();
 	}
 	catch (Shader::CompileError &e)
 	{
-		std::cerr << "##compile error##\n" << e.what() << std::endl;
 		return false;
 	}
 

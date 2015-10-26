@@ -34,7 +34,7 @@
 
 #include "Material.h"
 
-class Container
+class Container : private ext::noncopyable
 {
 private:
 	GLuint m_vbo = 0, m_vao = 0;

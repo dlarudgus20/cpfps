@@ -32,7 +32,7 @@
 #ifndef LIGHT_H_
 #define LIGHT_H_
 
-class Light
+class Light : private ext::noncopyable
 {
 protected:
 	glm::vec3 m_ambient, m_diffuse, m_specular;

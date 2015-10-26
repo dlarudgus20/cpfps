@@ -34,7 +34,7 @@
 
 #include "Material.h"
 
-class WoodPlane
+class WoodPlane : private ext::noncopyable
 {
 private:
 	GLuint m_vbo = 0, m_vao = 0;

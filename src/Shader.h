@@ -32,7 +32,7 @@
 #ifndef SHADER_H_
 #define SHADER_H_
 
-class Shader final
+class Shader : private ext::noncopyable
 {
 public:
 	static constexpr int POINTLIGHT_COUNT = 4;

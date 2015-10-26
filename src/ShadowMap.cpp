@@ -29,10 +29,12 @@
  * @copyright The BSD (2-Clause) License
  */
 
+#include "ShadowMap.h"
+
 #include "pch.h"
 #include "ext.h"
-#include "ShadowMap.h"
 #include "Scene.h"
+#include "ShaderManager.h"
 
 namespace
 {
@@ -71,18 +73,21 @@ void ShadowMap::calcProjection(float fovy, float aspect, float zNear, float zFar
 
 void ShadowMap::renderScene(Scene *pScene, GLsizei width, GLsizei height, const glm::mat4 &viewMatrix) const
 {
-	glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+	auto shadowShader = ShaderManager::getInstance().getShadowShader();
+	auto shadowDepthShader = ShaderManager::getInstance().getShadowDepthShader();
+
 	glBindFramebuffer(GL_FRAMEBUFFER, m_depthMapFBO);
 	{
-		glm::mat4 lightSpaceMatrix = m_lightProjection * m_lightView;
-
+		glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
 		glClear(GL_DEPTH_BUFFER_BIT);
-		pScene->render(viewMatrix);
+		shadowDepthShader.use();
+		shadowDepthShader.setUniformMatrix4f("projMatrix", m_lightProjection);
+		pScene->render(m_lightView, false);
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	glViewport(0, 0, width, height);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	Texture::bind(&m_depthMap);
-	pScene->render(viewMatrix);
+	pScene->render(viewMatrix, true);
 }

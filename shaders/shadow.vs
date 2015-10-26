@@ -23,65 +23,37 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /**
- * @file MainScene.cpp
- * @date 2015. 10. 23.
+ * @file shadow.vs
+ * @date 2015. 10. 26.
  * @author dlarudgus20
  * @copyright The BSD (2-Clause) License
  */
 
-#include "pch.h"
-#include "ext.h"
-#include "MainScene.h"
-#include "Shader.h"
+#version 330 core
 
-MainScene::MainScene()
+layout(location = 0) in vec3 position;
+layout(location = 1) in vec3 normal;
+layout(location = 2) in vec2 texCoord;
+
+out VS_OUT
 {
+	vec3 fragPos;
+	vec3 normal;
+	vec3 texCoord;
+	vec3 fragPosLightSpace;
+} vs_out;
 
-}
+uniform mat4 projMatrix;
+uniform mat4 vmMatrix;
+uniform mat4 normalMatrix;
 
-MainScene::~MainScene()
+void main()
 {
+	vec4 pos = vec4(position, 1.0f);
 
-}
+	vs_out.fragTexCoord = vec2(texCoord.x, 1 - texCoord.y);
+	vs_out.fragNormal = normalMatrix * normal;
+	vs_out.fragPos = vec3(vmMatrix * pos);
 
-void MainScene::render(const glm::mat4 &viewMatrix, bool bUseNormalMatrix) const
-{
-	Shader *pShader = Shader::getCurrentShader();
-
-	glm::mat4 vmMatrix = viewMatrix;
-
-	auto setMatrices = [&, bUseNormalMatrix] {
-		glm::mat3 normalMatrix = glm::mat3(glm::transpose(glm::inverse(vmMatrix)));
-		pShader->setUniformMatrix4f("vmMatrix", vmMatrix);
-		if (bUseNormalMatrix)
-			pShader->setUniformMatrix3f("NormalMatrix", normalMatrix);
-	};
-
-	{
-		setMatrices();
-		m_woodplane.draw();
-	}
-	{
-		glm::mat4 prevMat = vmMatrix;
-		vmMatrix = glm::translate(vmMatrix, { 0.0f, 1.5f, 0.0f });
-		setMatrices();
-		m_container.draw();
-		vmMatrix = prevMat;
-	}
-	{
-		glm::mat4 prevMat = vmMatrix;
-		vmMatrix = glm::translate(vmMatrix, { 2.0f, 0.0f, 1.0f });
-		setMatrices();
-		m_container.draw();
-		vmMatrix = prevMat;
-	}
-	{
-		glm::mat4 prevMat = vmMatrix;
-		vmMatrix = glm::translate(vmMatrix, { -1.0f, 0.0f, 2.0f });
-		vmMatrix = glm::rotate(vmMatrix, glm::radians(60.0f), glm::normalize(glm::vec3(1.0f, 0.0f, 1.0f)));
-		vmMatrix = glm::scale(vmMatrix, glm::vec3(0.5f));
-		setMatrices();
-		m_container.draw();
-		vmMatrix = prevMat;
-	}
+	gl_Position = projMatrix * vmMatrix * pos;
 }

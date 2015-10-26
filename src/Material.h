@@ -34,7 +34,7 @@
 
 #include "Texture.h"
 
-class Material
+class Material : private ext::noncopyable
 {
 private:
 	std::shared_ptr<Texture> m_diffuseMap, m_specularMap;

@@ -23,65 +23,49 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /**
- * @file MainScene.cpp
- * @date 2015. 10. 23.
+ * @file ShaderManager.cpp
+ * @date 2015. 10. 26.
  * @author dlarudgus20
  * @copyright The BSD (2-Clause) License
  */
 
 #include "pch.h"
 #include "ext.h"
-#include "MainScene.h"
-#include "Shader.h"
+#include "ShaderManager.h"
 
-MainScene::MainScene()
+ShaderManager &ShaderManager::getInstance()
 {
-
+	static ShaderManager obj;
+	return obj;
 }
 
-MainScene::~MainScene()
+Shader &ShaderManager::getShadowShader() const
 {
-
+	return m_shadowShader;
 }
 
-void MainScene::render(const glm::mat4 &viewMatrix, bool bUseNormalMatrix) const
+Shader &ShaderManager::getShadowDepthShader() const
 {
-	Shader *pShader = Shader::getCurrentShader();
+	return m_shadowDepthShader;
+}
 
-	glm::mat4 vmMatrix = viewMatrix;
-
-	auto setMatrices = [&, bUseNormalMatrix] {
-		glm::mat3 normalMatrix = glm::mat3(glm::transpose(glm::inverse(vmMatrix)));
-		pShader->setUniformMatrix4f("vmMatrix", vmMatrix);
-		if (bUseNormalMatrix)
-			pShader->setUniformMatrix3f("NormalMatrix", normalMatrix);
+void ShaderManager::initialize()
+{
+	auto doCompile = [](Shader &shader, const char *vs, const char *fs, const char *name) {
+		std::cout << "->compile shader (" << name << ")" << std::endl;
+		shader.compile(vs, fs);
+		std::cout << ">vertex shader info:\n" << shader.getVSInfoString() << std::endl;
+		std::cout << ">fragment shader info:\n" << shader.getFSInfoString() << std::endl;
 	};
 
+	try
 	{
-		setMatrices();
-		m_woodplane.draw();
+		doCompile(m_shadowShader, "shaders/shadow.vs", "shaders/shadow.fs", "shadow");
+		doCompile(m_shadowDepthShader, "shaders/shadow_depth.glsl", "shaders/shadow_depth.glsl", "shadow_depth");
 	}
+	catch (Shader::CompileError &e)
 	{
-		glm::mat4 prevMat = vmMatrix;
-		vmMatrix = glm::translate(vmMatrix, { 0.0f, 1.5f, 0.0f });
-		setMatrices();
-		m_container.draw();
-		vmMatrix = prevMat;
-	}
-	{
-		glm::mat4 prevMat = vmMatrix;
-		vmMatrix = glm::translate(vmMatrix, { 2.0f, 0.0f, 1.0f });
-		setMatrices();
-		m_container.draw();
-		vmMatrix = prevMat;
-	}
-	{
-		glm::mat4 prevMat = vmMatrix;
-		vmMatrix = glm::translate(vmMatrix, { -1.0f, 0.0f, 2.0f });
-		vmMatrix = glm::rotate(vmMatrix, glm::radians(60.0f), glm::normalize(glm::vec3(1.0f, 0.0f, 1.0f)));
-		vmMatrix = glm::scale(vmMatrix, glm::vec3(0.5f));
-		setMatrices();
-		m_container.draw();
-		vmMatrix = prevMat;
+		std::cerr << "##compile error##\n" << e.what() << std::endl;
+		throw;
 	}
 }

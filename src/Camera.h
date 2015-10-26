@@ -32,7 +32,7 @@
 #ifndef CAMERA_H_
 #define CAMERA_H_
 
-class Camera
+class Camera : private ext::noncopyable
 {
 private:
 	glm::vec3 m_position;

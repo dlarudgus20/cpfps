@@ -47,7 +47,7 @@ public:
 	MainScene();
 	virtual ~MainScene();
 
-	virtual void render(const glm::mat4 &viewMatrix) const override;
+	virtual void render(const glm::mat4 &viewMatrix, bool bUseNormalMatrix) const override;
 };
 
 #endif /* MAINSCENE_H_ */

@@ -32,8 +32,6 @@
 #ifndef MAINWND_H_
 #define MAINWND_H_
 
-#include "Shader.h"
-
 #include "DirectionalLight.h"
 #include "PointLight.h"
 #include "SpotLight.h"
@@ -42,15 +40,13 @@
 
 class Scene;
 
-class MainWnd final
+class MainWnd : private ext::noncopyable
 {
 public:
 	static std::unique_ptr<MainWnd> createInstance();
 
 private:
 	GLFWwindow *m_wnd;
-
-	Shader m_shader, m_shaderNolight;
 
 	DirectionalLight m_dirLight;
 	PointLight m_ptLights[Shader::POINTLIGHT_COUNT];

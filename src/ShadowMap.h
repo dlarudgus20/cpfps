@@ -36,7 +36,7 @@
 
 class Scene;
 
-class ShadowMap
+class ShadowMap : private ext::noncopyable
 {
 private:
 	GLuint m_depthMapFBO;
