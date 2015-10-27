@@ -23,31 +23,36 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /**
- * @file MainScene.h
- * @date 2015. 10. 23.
+ * @file LightManager.h
+ * @date 2015. 10. 27.
  * @author dlarudgus20
  * @copyright The BSD (2-Clause) License
  */
 
-#ifndef MAINSCENE_H_
-#define MAINSCENE_H_
+#ifndef LIGHTMANAGER_H_
+#define LIGHTMANAGER_H_
 
-#include "Scene.h"
+#include "DirectionalLight.h"
+#include "PointLight.h"
+#include "SpotLight.h"
 
-#include "Container.h"
-#include "WoodPlane.h"
-
-class MainScene : public Scene
+class LightManager : private ext::noncopyable
 {
+public:
+	static LightManager &getInstance();
+
+	static constexpr int POINTLIGHT_COUNT = 4;
+
 private:
-	Container m_container;
-	WoodPlane m_woodplane;
+	DirectionalLight m_dirLight;
+	PointLight m_ptLights[POINTLIGHT_COUNT];
+	SpotLight m_spLight;
+
+	LightManager() = default;
 
 public:
-	MainScene();
-	virtual ~MainScene();
-
-	virtual void render(const glm::mat4 &projMatrix, const glm::mat4 &viewMatrix, bool bRenderOnlyDepth) const override;
+	void initialize();
+	void apply(const glm::mat4 &viewMatrix) const;
 };
 
-#endif /* MAINSCENE_H_ */
+#endif /* LIGHTMANAGER_H_ */

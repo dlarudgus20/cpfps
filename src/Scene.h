@@ -37,7 +37,7 @@ class Scene : private ext::noncopyable
 public:
 	virtual ~Scene() = 0;
 
-	virtual void render(const glm::mat4 &viewMatrix, bool bUseNormalMatrix) const = 0;
+	virtual void render(const glm::mat4 &projMatrix, const glm::mat4 &viewMatrix, bool bRenderOnlyDepth) const = 0;
 };
 
 #endif /* SCENE_H_ */

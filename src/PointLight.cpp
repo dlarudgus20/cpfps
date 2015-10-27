@@ -33,6 +33,7 @@
 #include "ext.h"
 #include "PointLight.h"
 #include "Shader.h"
+#include "LightManager.h"
 
 PointLight::PointLight()
 	: m_index(-1)
@@ -80,7 +81,7 @@ float PointLight::getAttenuationQuadratic() const
 
 void PointLight::apply(const glm::mat4 &viewMatrix) const
 {
-	assert(0 <= m_index && m_index <= Shader::POINTLIGHT_COUNT);
+	assert(0 <= m_index && m_index <= LightManager::POINTLIGHT_COUNT);
 
 	assert(m_index <= 9);
 	std::string prefix = "ptLights[ ]";

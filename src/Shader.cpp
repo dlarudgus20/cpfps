@@ -44,6 +44,7 @@ Shader *Shader::getCurrentShader()
 }
 
 Shader::Shader()
+	: m_vertexShader(0), m_fragmentShader(0)
 {
 }
 
@@ -59,6 +60,8 @@ Shader::~Shader()
 
 void Shader::compile(const char *vertex, const char *fragment)
 {
+	assert(m_vertexShader == 0 && m_fragmentShader == 0);
+
 	m_vertexShader = loadFile(vertex, GL_VERTEX_SHADER, m_vsInfoString);
 	m_fragmentShader = loadFile(fragment, GL_FRAGMENT_SHADER, m_fsInfoString);
 
@@ -69,8 +72,17 @@ void Shader::compile(const char *vertex, const char *fragment)
 
 	GLint success;
 	glGetProgramiv(m_shaderProgram, GL_LINK_STATUS, &success);
+
+	GLint size;
+	glGetProgramiv(m_shaderProgram, GL_INFO_LOG_LENGTH, &size);
+	std::string info(size, '\0');
+	glGetProgramInfoLog(m_shaderProgram, size, nullptr, &info[0]);
+	ext::trim(info);
+
+	m_linkInfoString = info;
+
 	if (!success)
-		throw CompileError("shader link error");
+		throw LinkError("[vs: " + std::string(vertex) + " fs: " + fragment + "] : \n" + info);
 }
 
 void Shader::use()
@@ -79,34 +91,19 @@ void Shader::use()
 	pCurrentShader = this;
 }
 
-void Shader::setUniform1f(const char *var, GLfloat f)
+const std::string &Shader::getVSInfoString()
 {
-	glUniform1f(findUniform(var), f);
+	return m_vsInfoString;
 }
 
-void Shader::setUniform3f(const char *var, const glm::vec3 &vec3)
+const std::string &Shader::getFSInfoString()
 {
-	glUniform3fv(findUniform(var), 1, glm::value_ptr(vec3));
+	return m_fsInfoString;
 }
 
-void Shader::setUniform4f(const char *var, const glm::vec4 &vec4)
+const std::string &Shader::getLinkInfoString()
 {
-	glUniform4fv(findUniform(var), 1, glm::value_ptr(vec4));
-}
-
-void Shader::setUniform1i(const char *var, GLint i)
-{
-	glUniform1i(findUniform(var), i);
-}
-
-void Shader::setUniformMatrix3f(const char *var, const glm::mat3 &mat)
-{
-	glUniformMatrix3fv(findUniform(var), 1, GL_FALSE, glm::value_ptr(mat));
-}
-
-void Shader::setUniformMatrix4f(const char *var, const glm::mat4 &mat)
-{
-	glUniformMatrix4fv(findUniform(var), 1, GL_FALSE, glm::value_ptr(mat));
+	return m_linkInfoString;
 }
 
 GLint Shader::findUniform(const char *var)
@@ -125,6 +122,9 @@ GLuint Shader::loadFile(const char *filename, GLuint shaderType, std::string &in
 		file.exceptions(std::ios::badbit);
 		file.open(filename);
 
+		if (!file.is_open())
+			throw CompileError("[" + std::string(filename) + "] I/O Error : file doesn't exist");
+
 		std::string strSource;
 		std::copy(std::istreambuf_iterator<char> { file }, std::istreambuf_iterator<char> { },
 			std::back_inserter(strSource));
@@ -141,12 +141,7 @@ GLuint Shader::loadFile(const char *filename, GLuint shaderType, std::string &in
 		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &size);
 		std::string info(size, '\0');
 		glGetShaderInfoLog(shader, size, nullptr, &info[0]);
-
-		// trim
-		info.erase(
-			std::find_if(info.rbegin(), info.rend(),
-				[](char c) { return !(isspace(c) || iscntrl(c)); }).base(),
-			info.end());
+		ext::trim(info);
 
 		infoString = info;
 
@@ -156,11 +151,11 @@ GLuint Shader::loadFile(const char *filename, GLuint shaderType, std::string &in
 		}
 		else
 		{
-			throw CompileError("[" + std::string(filename) + "] : " + info);
+			throw CompileError("[" + std::string(filename) + "] : \n" + info);
 		}
 	}
 	catch (std::ios::failure &e)
 	{
-		throw CompileError("[" + std::string(filename) + "] : " + e.what());
+		throw CompileError("[" + std::string(filename) + "] I/O Error : " + e.what());
 	}
 }

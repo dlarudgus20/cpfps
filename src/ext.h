@@ -34,7 +34,9 @@
 #define EXT_H_
 
 #include <cstddef>
+#include <algorithm>
 #include <memory>
+#include <string>
 #include <type_traits>
 #include <utility>
 
@@ -82,6 +84,27 @@ namespace ext
 	protected:
 		noncopyable() = default;
 	};
+
+	// trim
+	inline void trimEnd(std::string &str)
+	{
+		str.erase(
+			std::find_if(str.rbegin(), str.rend(),
+				[](char c) { return !(isspace(c) || iscntrl(c)); }).base(),
+			str.end());
+	}
+	inline void trimStart(std::string &str)
+	{
+		str.erase(
+			str.begin(),
+			std::find_if(str.begin(), str.end(),
+				[](char c) { return !(isspace(c) || iscntrl(c)); }));
+	}
+	inline void trim(std::string &str)
+	{
+		trimEnd(str);
+		trimStart(str);
+	}
 }
 
 #endif /* EXT_H_ */

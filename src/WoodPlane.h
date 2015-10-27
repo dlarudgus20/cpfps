@@ -44,7 +44,7 @@ public:
 	WoodPlane();
 	~WoodPlane();
 
-	void draw(bool bUseMaterial = true) const;
+	void draw(bool bUseMaterial) const;
 };
 
 #endif /* WOODPLANE_H_ */

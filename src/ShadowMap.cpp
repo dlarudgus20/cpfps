@@ -29,12 +29,12 @@
  * @copyright The BSD (2-Clause) License
  */
 
-#include "ShadowMap.h"
-
 #include "pch.h"
 #include "ext.h"
+#include "ShadowMap.h"
 #include "Scene.h"
 #include "ShaderManager.h"
+#include "LightManager.h"
 
 namespace
 {
@@ -71,23 +71,30 @@ void ShadowMap::calcProjection(float fovy, float aspect, float zNear, float zFar
 	m_lightProjection = glm::ortho(-x, x, -y, y, zNear, zFar);
 }
 
-void ShadowMap::renderScene(Scene *pScene, GLsizei width, GLsizei height, const glm::mat4 &viewMatrix) const
+void ShadowMap::renderScene(Scene *pScene, const glm::mat4 &projMatrix, const glm::mat4 &viewMatrix,
+	GLsizei viewportWidth, GLsizei viewportHeight) const
 {
-	auto shadowShader = ShaderManager::getInstance().getShadowShader();
-	auto shadowDepthShader = ShaderManager::getInstance().getShadowDepthShader();
+	auto &shadowShader = ShaderManager::getInstance().getShadowShader();
+	auto &shadowDepthShader = ShaderManager::getInstance().getShadowDepthShader();
 
 	glBindFramebuffer(GL_FRAMEBUFFER, m_depthMapFBO);
 	{
 		glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
 		glClear(GL_DEPTH_BUFFER_BIT);
+
 		shadowDepthShader.use();
-		shadowDepthShader.setUniformMatrix4f("projMatrix", m_lightProjection);
-		pScene->render(m_lightView, false);
+
+		pScene->render(m_lightProjection, m_lightView, true);
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	glViewport(0, 0, width, height);
+	glViewport(0, 0, viewportWidth, viewportHeight);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	shadowShader.use();
+	shadowShader.setUniformMatrix4f("lightSpaceMatrix", m_lightProjection * m_lightView);
+	LightManager::getInstance().apply(viewMatrix);
+
 	Texture::bind(&m_depthMap);
-	pScene->render(viewMatrix, true);
+	pScene->render(projMatrix, viewMatrix, false);
 }

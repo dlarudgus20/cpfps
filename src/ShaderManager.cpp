@@ -39,12 +39,12 @@ ShaderManager &ShaderManager::getInstance()
 	return obj;
 }
 
-Shader &ShaderManager::getShadowShader() const
+Shader &ShaderManager::getShadowShader()
 {
 	return m_shadowShader;
 }
 
-Shader &ShaderManager::getShadowDepthShader() const
+Shader &ShaderManager::getShadowDepthShader()
 {
 	return m_shadowDepthShader;
 }
@@ -61,11 +61,16 @@ void ShaderManager::initialize()
 	try
 	{
 		doCompile(m_shadowShader, "shaders/shadow.vs", "shaders/shadow.fs", "shadow");
-		doCompile(m_shadowDepthShader, "shaders/shadow_depth.glsl", "shaders/shadow_depth.glsl", "shadow_depth");
+		doCompile(m_shadowDepthShader, "shaders/shadow_depth.vs", "shaders/shadow_depth.fs", "shadow_depth");
 	}
 	catch (Shader::CompileError &e)
 	{
 		std::cerr << "##compile error##\n" << e.what() << std::endl;
+		throw;
+	}
+	catch (Shader::LinkError &e)
+	{
+		std::cerr << "##link error##\n" << e.what() << std::endl;
 		throw;
 	}
 }

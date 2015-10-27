@@ -46,8 +46,8 @@ private:
 	ShaderManager() = default;
 
 public:
-	Shader &getShadowShader() const;
-	Shader &getShadowDepthShader() const;
+	Shader &getShadowShader();
+	Shader &getShadowDepthShader();
 
 	void initialize();
 };

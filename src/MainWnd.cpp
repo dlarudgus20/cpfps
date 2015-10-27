@@ -32,6 +32,9 @@
 #include "pch.h"
 #include "ext.h"
 #include "MainWnd.h"
+#include "ShaderManager.h"
+#include "LightManager.h"
+#include "ShadowMap.h"
 #include "MainScene.h"
 
 const int MAINWND_WIDTH = 800;
@@ -176,61 +179,33 @@ void MainWnd::initCallback()
 
 bool MainWnd::initialize()
 {
-	glfwSetInputMode(m_wnd, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
-	int width, height;
-	glfwGetFramebufferSize(m_wnd, &width, &height);
-
-	glViewport(0, 0, static_cast<GLsizei>(width), static_cast<GLsizei>(height));
-	calcProjection(width, height);
-
-	glEnable(GL_DEPTH_TEST);
-
 	try
 	{
+		glfwSetInputMode(m_wnd, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+		int width, height;
+		glfwGetFramebufferSize(m_wnd, &width, &height);
+
+		glViewport(0, 0, static_cast<GLsizei>(width), static_cast<GLsizei>(height));
+		calcProjection(width, height);
+
+		glEnable(GL_DEPTH_TEST);
+
 		ShaderManager::getInstance().initialize();
+		LightManager::getInstance().initialize();
+		m_pShadowMap = ext::make_unique<ShadowMap>();
+		m_pScene = ext::make_unique<MainScene>();
+
+		return true;
 	}
 	catch (Shader::CompileError &e)
 	{
 		return false;
 	}
-
-	//m_dirLight.setDirection({ -2.0f, -1.0f, -1.2f });
-	//m_dirLight.setAmbient({ 0.1f, 0.1f, 0.1f });
-	//m_dirLight.setDiffuse({ 1.0f, 1.0f, 1.0f });
-	//m_dirLight.setSpecular({ 1.0f, 1.0f, 1.0f });
-
-	//glm::vec3 ptLightPositions[] = {
-	//	{ 2.3f, -3.3f, -4.0f },
-	//	{ 0.7f,  0.2f,  2.0f },
-	//	{ -4.0f,  2.0f, -12.0f },
-	//	{ 0.0f,  0.0f, -3.0f },
-	//};
-	for (int i = 0; i < Shader::POINTLIGHT_COUNT; ++i)
+	catch (Shader::LinkError &e)
 	{
-		m_ptLights[i].setIndex(i);
-		//m_ptLights[i].setPosition(ptLightPositions[i]);
-		//m_ptLights[i].setAmbient({ 0.1f, 0.1f, 0.1f });
-		//m_ptLights[i].setDiffuse({ 1.0f, 1.0f, 1.0f });
-		//m_ptLights[i].setSpecular({ 1.0f, 1.0f, 1.0f });
-		//m_ptLights[i].setAttenuation(1.0f, 0.14f * 0.4, 0.07f * 0.4);
+		return false;
 	}
-	m_ptLights[0].setPosition({ -2.0f, 4.0f, -1.0f });
-	m_ptLights[0].setAmbient(glm::vec3(0.2f));
-	m_ptLights[0].setDiffuse(glm::vec3(1.0f));
-	m_ptLights[0].setSpecular(glm::vec3(0.0f));
-	m_ptLights[0].setAttenuation(1.0f, 0.0f, 0.0f);
-
-	//m_spLight.setPosition({ 2.3f, -3.3f, -4.0f });
-	//m_spLight.setDirection({ -2.3f, 3.3f, 4.0f });
-	//m_spLight.setAmbient({ 0.1f, 0.1f, 0.1f });
-	//m_spLight.setDiffuse({ 1.0f, 1.0f, 1.0f });
-	//m_spLight.setSpecular({ 1.0f, 1.0f, 1.0f });
-	//m_spLight.setCutOff(std::cos(glm::radians(12.5f)), std::cos(glm::radians(17.5f)));
-
-	m_pScene = ext::make_unique<MainScene>();
-
-	return true;
 }
 
 void MainWnd::render()
@@ -238,15 +213,11 @@ void MainWnd::render()
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	m_shader.use();
-	m_shader.setUniformMatrix4f("projMatrix", m_projection);
+	int width, height;
+	glfwGetFramebufferSize(m_wnd, &width, &height);
 
-	m_dirLight.apply(m_camera.getMatrix());
-	for (const auto &ptLight : m_ptLights)
-		ptLight.apply(m_camera.getMatrix());
-	m_spLight.apply(m_camera.getMatrix());
-
-	m_pScene->render(m_camera.getMatrix());
+	m_pShadowMap->renderScene(m_pScene.get(), m_projection, m_camera.getMatrix(),
+		static_cast<GLsizei>(width), static_cast<GLsizei>(height));
 
 	glfwSwapBuffers(m_wnd);
 }

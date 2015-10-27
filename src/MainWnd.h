@@ -32,12 +32,9 @@
 #ifndef MAINWND_H_
 #define MAINWND_H_
 
-#include "DirectionalLight.h"
-#include "PointLight.h"
-#include "SpotLight.h"
-
 #include "Camera.h"
 
+class ShadowMap;
 class Scene;
 
 class MainWnd : private ext::noncopyable
@@ -48,9 +45,7 @@ public:
 private:
 	GLFWwindow *m_wnd;
 
-	DirectionalLight m_dirLight;
-	PointLight m_ptLights[Shader::POINTLIGHT_COUNT];
-	SpotLight m_spLight;
+	std::unique_ptr<ShadowMap> m_pShadowMap;
 
 	glm::mat4 m_projection;
 	Camera m_camera;

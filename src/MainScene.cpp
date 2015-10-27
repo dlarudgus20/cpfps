@@ -44,35 +44,41 @@ MainScene::~MainScene()
 
 }
 
-void MainScene::render(const glm::mat4 &viewMatrix, bool bUseNormalMatrix) const
+void MainScene::render(const glm::mat4 &projMatrix, const glm::mat4 &viewMatrix, bool bRenderOnlyDepth) const
 {
 	Shader *pShader = Shader::getCurrentShader();
 
+	pShader->setUniformMatrix4f("projMatrix", projMatrix);
+
 	glm::mat4 vmMatrix = viewMatrix;
 
-	auto setMatrices = [&, bUseNormalMatrix] {
-		glm::mat3 normalMatrix = glm::mat3(glm::transpose(glm::inverse(vmMatrix)));
+	auto applyMatrix = [&, bRenderOnlyDepth] {
 		pShader->setUniformMatrix4f("vmMatrix", vmMatrix);
-		if (bUseNormalMatrix)
-			pShader->setUniformMatrix3f("NormalMatrix", normalMatrix);
+		if (!bRenderOnlyDepth)
+		{
+			glm::mat3 normalMatrix = glm::mat3(glm::transpose(glm::inverse(vmMatrix)));
+			pShader->setUniformMatrix3f("normalMatrix", normalMatrix);
+		}
 	};
 
+	bool bUseMaterial = !bRenderOnlyDepth;
+
 	{
-		setMatrices();
-		m_woodplane.draw();
+		applyMatrix();
+		m_woodplane.draw(bUseMaterial);
 	}
 	{
 		glm::mat4 prevMat = vmMatrix;
 		vmMatrix = glm::translate(vmMatrix, { 0.0f, 1.5f, 0.0f });
-		setMatrices();
-		m_container.draw();
+		applyMatrix();
+		m_container.draw(bUseMaterial);
 		vmMatrix = prevMat;
 	}
 	{
 		glm::mat4 prevMat = vmMatrix;
 		vmMatrix = glm::translate(vmMatrix, { 2.0f, 0.0f, 1.0f });
-		setMatrices();
-		m_container.draw();
+		applyMatrix();
+		m_container.draw(bUseMaterial);
 		vmMatrix = prevMat;
 	}
 	{
@@ -80,8 +86,8 @@ void MainScene::render(const glm::mat4 &viewMatrix, bool bUseNormalMatrix) const
 		vmMatrix = glm::translate(vmMatrix, { -1.0f, 0.0f, 2.0f });
 		vmMatrix = glm::rotate(vmMatrix, glm::radians(60.0f), glm::normalize(glm::vec3(1.0f, 0.0f, 1.0f)));
 		vmMatrix = glm::scale(vmMatrix, glm::vec3(0.5f));
-		setMatrices();
-		m_container.draw();
+		applyMatrix();
+		m_container.draw(bUseMaterial);
 		vmMatrix = prevMat;
 	}
 }

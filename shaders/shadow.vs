@@ -39,21 +39,24 @@ out VS_OUT
 {
 	vec3 fragPos;
 	vec3 normal;
-	vec3 texCoord;
-	vec3 fragPosLightSpace;
+	vec2 texCoord;
+	vec4 fragPosLightSpace;
 } vs_out;
 
 uniform mat4 projMatrix;
 uniform mat4 vmMatrix;
-uniform mat4 normalMatrix;
+
+uniform mat3 normalMatrix;
+uniform mat4 lightSpaceMatrix;
 
 void main()
 {
 	vec4 pos = vec4(position, 1.0f);
 
-	vs_out.fragTexCoord = vec2(texCoord.x, 1 - texCoord.y);
-	vs_out.fragNormal = normalMatrix * normal;
 	vs_out.fragPos = vec3(vmMatrix * pos);
+	vs_out.normal = normalMatrix * normal;
+	vs_out.texCoord = vec2(texCoord.x, 1 - texCoord.y);
+	vs_out.fragPosLightSpace = lightSpaceMatrix * pos;
 
 	gl_Position = projMatrix * vmMatrix * pos;
 }

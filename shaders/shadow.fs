@@ -31,8 +31,6 @@
 
 #version 330 core
 
-#version 330 core
-
 struct Material
 {
 	sampler2D diffuseMap;
@@ -76,9 +74,10 @@ struct SpotLight
 
 in VS_OUT
 {
-	vec2 fragTexCoord;
-	vec3 fragNormal;
 	vec3 fragPos;
+	vec3 normal;
+	vec2 texCoord;
+	vec4 fragPosLightSpace;
 } vs_out;
 
 out vec4 color;
@@ -88,8 +87,6 @@ uniform PointLight ptLights[POINTLIGHT_COUNT];
 uniform SpotLight spLight;
 
 uniform Material material;
-
-uniform mat3 NormalMatrix;
 
 vec3 calcDirectionalLight();
 vec3 calcPointLight(int idx);
@@ -141,10 +138,10 @@ vec3 calcSpotLight()
 
 vec3 calcPhongLighting(vec3 lightDir, vec3 ambientLight, vec3 diffuseLight, vec3 specularLight)
 {
-	vec3 diffmap = texture(material.diffuseMap, vs_out.fragTexCoord).xyz;
-	vec3 specmap = texture(material.specularMap, vs_out.fragTexCoord).xyz;
+	vec3 diffmap = texture(material.diffuseMap, vs_out.texCoord).xyz;
+	vec3 specmap = texture(material.specularMap, vs_out.texCoord).xyz;
 
-	vec3 norm = NormalMatrix * normalize(vs_out.fragNormal);
+	vec3 norm = normalize(vs_out.normal);
 
 	vec3 ambient = diffmap * ambientLight;
 

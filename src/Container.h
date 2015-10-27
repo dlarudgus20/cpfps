@@ -44,7 +44,7 @@ public:
 	Container();
 	~Container();
 
-	void draw(bool bUseMaterial = true) const;
+	void draw(bool bUseMaterial) const;
 };
 
 #endif /* CONTAINER_H_ */

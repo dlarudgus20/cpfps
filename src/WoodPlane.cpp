@@ -84,7 +84,7 @@ WoodPlane::~WoodPlane()
 	glDeleteBuffers(1, &m_vbo);
 }
 
-void WoodPlane::draw(bool bUseMaterial /* = true */) const
+void WoodPlane::draw(bool bUseMaterial) const
 {
 	if (bUseMaterial)
 		m_material.apply();
