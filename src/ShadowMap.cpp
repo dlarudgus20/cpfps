@@ -55,13 +55,13 @@ ShadowMap::ShadowMap()
 	glGenFramebuffers(1, &m_depthMapFBO);
 	glBindFramebuffer(GL_FRAMEBUFFER, m_depthMapFBO);
 	{
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_COMPONENT, GL_TEXTURE_2D, m_depthMap.get(), 0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_depthMap.get(), 0);
 		glDrawBuffer(GL_NONE);
 		glReadBuffer(GL_NONE);
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	m_lightView = glm::lookAt({ -2.0f, 4.0f, -1.0f }, glm::vec3(0.0f), glm::vec3(1.0f));
+	m_lightView = glm::lookAt(glm::vec3 { -2.0f, 4.0f, -1.0f } * 100.0f, glm::vec3(0.0f), glm::vec3(1.0f));
 }
 
 void ShadowMap::calcProjection(float fovy, float aspect, float zNear, float zFar)
@@ -95,6 +95,7 @@ void ShadowMap::renderScene(Scene *pScene, const glm::mat4 &projMatrix, const gl
 	shadowShader.setUniformMatrix4f("lightSpaceMatrix", m_lightProjection * m_lightView);
 	LightManager::getInstance().apply(viewMatrix);
 
-	Texture::bind(&m_depthMap);
+	Texture::bind(5, &m_depthMap);
+	shadowShader.setUniform1i("shadowDepthMap", 5);
 	pScene->render(projMatrix, viewMatrix, false);
 }

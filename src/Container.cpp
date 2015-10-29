@@ -89,7 +89,7 @@ namespace
 	}
 	const std::shared_ptr<Texture> &getSpecularMap()
 	{
-		static auto obj = std::make_shared<Texture>("res/container2_specular.png", Texture::Parameter::getDefault());
+		static auto obj = std::make_shared<Texture>("res/container2_specular.png", GL_RGB, GL_RGB, Texture::Parameter::getDefault());
 		return obj;
 	}
 }

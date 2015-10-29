@@ -54,6 +54,16 @@ Texture::Texture()
 
 Texture::Texture(const char *file, const Parameter &params)
 {
+	init(file, GL_SRGB, GL_RGB, params);
+}
+
+Texture::Texture(const char *file, GLint internalformat, GLenum format, const Parameter &params)
+{
+	init(file, internalformat, format, params);
+}
+
+void Texture::init(const char *file, GLint internalformat, GLenum format, const Parameter &params)
+{
 	glGenTextures(1, &m_texture);
 	glBindTexture(GL_TEXTURE_2D, m_texture);
 	{
@@ -66,7 +76,7 @@ Texture::Texture(const char *file, const Parameter &params)
 			throw LoadError("[" + std::string(file) + "] : failed to load");
 		}
 
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texWidth, texHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+		glTexImage2D(GL_TEXTURE_2D, 0, internalformat, texWidth, texHeight, 0, format, GL_UNSIGNED_BYTE, image);
 		glGenerateMipmap(GL_TEXTURE_2D);
 
 		SOIL_free_image_data(image);

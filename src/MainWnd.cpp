@@ -190,6 +190,9 @@ bool MainWnd::initialize()
 		calcProjection(width, height);
 
 		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_FRAMEBUFFER_SRGB);
+
+		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
 		ShaderManager::getInstance().initialize();
 		LightManager::getInstance().initialize();
@@ -210,9 +213,6 @@ bool MainWnd::initialize()
 
 void MainWnd::render()
 {
-	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 	int width, height;
 	glfwGetFramebufferSize(m_wnd, &width, &height);
 

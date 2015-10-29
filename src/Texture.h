@@ -67,6 +67,7 @@ public:
 
 	Texture();
 	explicit Texture(const char *file, const Parameter &params);
+	explicit Texture(const char *file, GLint internalformat, GLenum format, const Parameter &params);
 	explicit Texture(GLint level, GLint internalformat,
 		GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const void *pixels,
 		bool bGenMipmap, const Parameter &params);
@@ -84,6 +85,9 @@ public:
 		explicit LoadError(const std::string &msg)
 			: std::runtime_error(msg) { }
 	};
+
+private:
+	void init(const char *file, GLint internalformat, GLenum format, const Parameter &params);
 };
 
 #endif /* TEXTURE_H_ */
