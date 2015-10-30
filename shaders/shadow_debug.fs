@@ -23,17 +23,25 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /**
- * @file frag_nolight.glsl
- * @date 2015. 9. 25.
+ * @file shadow_debug.fs
+ * @date 2015. 10. 30.
  * @author dlarudgus20
  * @copyright The BSD (2-Clause) License
  */
 
 #version 330 core
 
+in VS_OUT
+{
+	vec2 texCoord;
+} vs_out;
+
 out vec4 color;
+
+uniform sampler2D depthMap;
 
 void main()
 {
-	color = vec4(1.0f);
+	float depthValue = texture(depthMap, vs_out.texCoord).r;
+	color = vec4(vec3(depthValue), 1.0f);
 }

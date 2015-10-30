@@ -57,6 +57,9 @@ int main()
 			glewExperimental = GL_TRUE;
 			if (glewInit() == GLEW_OK)
 			{
+				GLenum err;
+				while ((err = glGetError()) != GL_NO_ERROR) { }
+
 				if (pWnd->initialize())
 				{
 					pWnd->loop();

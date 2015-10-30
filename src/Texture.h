@@ -44,7 +44,8 @@ public:
 	class Parameter
 	{
 	private:
-		std::map<GLenum, GLint> m_params;
+		std::map<GLenum, GLint> m_pari;
+		std::map<GLenum, GLfloat *> m_parfv;
 	public:
 		static Parameter getDefault();
 
@@ -54,7 +55,12 @@ public:
 			GLenum idx;
 			Parameter &operator ()(GLint par) const
 			{
-				thiz->m_params[idx] = par;
+				thiz->m_pari[idx] = par;
+				return *thiz;
+			}
+			Parameter &operator ()(GLfloat *par) const
+			{
+				thiz->m_parfv[idx] = par;
 				return *thiz;
 			}
 		};

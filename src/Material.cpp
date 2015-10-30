@@ -34,6 +34,12 @@
 #include "Material.h"
 #include "Shader.h"
 
+Material::Material()
+	: m_diffuseMap(nullptr), m_specularMap(nullptr)
+	, m_shininess(0.0f)
+{
+}
+
 Material::Material(std::shared_ptr<Texture> diffuseMap, std::shared_ptr<Texture> specularMap, float shininess)
 	: m_diffuseMap(std::move(diffuseMap)), m_specularMap(std::move(specularMap))
 	, m_shininess(shininess)
@@ -46,6 +52,9 @@ Material::~Material()
 
 void Material::apply() const
 {
+	assert(m_diffuseMap.get() != nullptr);
+	assert(m_specularMap.get() != nullptr);
+
 	Shader *pShader = Shader::getCurrentShader();
 
 	Texture::bind(0, m_diffuseMap.get());

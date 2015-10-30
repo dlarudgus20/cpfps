@@ -138,8 +138,12 @@ Texture::Parameter Texture::Parameter::getDefault()
 
 void Texture::Parameter::apply() const
 {
-	for (const auto &pr : m_params)
+	for (const auto &pr : m_pari)
 	{
 		glTexParameteri(GL_TEXTURE_2D, pr.first, pr.second);
+	}
+	for (const auto &pr : m_parfv)
+	{
+		glTexParameterfv(GL_TEXTURE_2D, pr.first, pr.second);
 	}
 }

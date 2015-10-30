@@ -34,14 +34,16 @@
 
 #include "Texture.h"
 
-class Material : private ext::noncopyable
+class Material
 {
 private:
 	std::shared_ptr<Texture> m_diffuseMap, m_specularMap;
 	float m_shininess;
 
 public:
+	Material();
 	explicit Material(std::shared_ptr<Texture> diffuseMap, std::shared_ptr<Texture> specularMap, float shininess);
+
 	~Material();
 
 	void apply() const;

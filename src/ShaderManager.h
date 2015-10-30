@@ -39,15 +39,22 @@ class ShaderManager : private ext::noncopyable
 public:
 	static ShaderManager &getInstance();
 
+	enum
+	{
+		SHADOW,
+		SHADOW_DEPTH,
+		SHADOW_DEBUG,
+
+		COUNT_SHADER
+	};
+
 private:
-	Shader m_shadowShader;
-	Shader m_shadowDepthShader;
+	Shader m_arShader[COUNT_SHADER];
 
 	ShaderManager() = default;
 
 public:
-	Shader &getShadowShader();
-	Shader &getShadowDepthShader();
+	Shader &getShader(int index);
 
 	void initialize();
 };

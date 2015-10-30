@@ -39,14 +39,9 @@ ShaderManager &ShaderManager::getInstance()
 	return obj;
 }
 
-Shader &ShaderManager::getShadowShader()
+Shader &ShaderManager::getShader(int index)
 {
-	return m_shadowShader;
-}
-
-Shader &ShaderManager::getShadowDepthShader()
-{
-	return m_shadowDepthShader;
+	return m_arShader[index];
 }
 
 void ShaderManager::initialize()
@@ -60,8 +55,9 @@ void ShaderManager::initialize()
 
 	try
 	{
-		doCompile(m_shadowShader, "shaders/shadow.vs", "shaders/shadow.fs", "shadow");
-		doCompile(m_shadowDepthShader, "shaders/shadow_depth.vs", "shaders/shadow_depth.fs", "shadow_depth");
+		doCompile(m_arShader[SHADOW], "shaders/shadow.vs", "shaders/shadow.fs", "shadow");
+		doCompile(m_arShader[SHADOW_DEPTH], "shaders/shadow_depth.vs", "shaders/shadow_depth.fs", "shadow_depth");
+		doCompile(m_arShader[SHADOW_DEBUG], "shaders/shadow_debug.vs", "shaders/shadow_debug.fs", "shadow_debug");
 	}
 	catch (Shader::CompileError &e)
 	{

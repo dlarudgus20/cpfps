@@ -23,8 +23,8 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /**
- * @file vertex.glsl
- * @date 2015. 9. 18.
+ * @file shadow_debug.vs
+ * @date 2015. 10. 30.
  * @author dlarudgus20
  * @copyright The BSD (2-Clause) License
  */
@@ -32,26 +32,15 @@
 #version 330 core
 
 layout(location = 0) in vec3 position;
-layout(location = 1) in vec3 normal;
-layout(location = 2) in vec2 texCoord;
+layout(location = 1) in vec2 texCoord;
 
 out VS_OUT
 {
-	vec2 fragTexCoord;
-	vec3 fragNormal;
-	vec3 fragPos;
+	vec2 texCoord;
 } vs_out;
-
-uniform mat4 projMatrix;
-uniform mat4 vmMatrix;
 
 void main()
 {
-	vec4 pos = vec4(position, 1.0f);
-
-	vs_out.fragTexCoord = vec2(texCoord.x, 1 - texCoord.y);
-	vs_out.fragNormal = normal;
-	vs_out.fragPos = vec3(vmMatrix * pos);
-
-	gl_Position = projMatrix * vmMatrix * pos;
+	vs_out.texCoord = texCoord;
+	gl_Position = vec4(position, 1.0f);
 }
