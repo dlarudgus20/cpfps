@@ -43,7 +43,6 @@ public:
 	{
 		SHADOW,
 		SHADOW_DEPTH,
-		SHADOW_DEBUG,
 
 		COUNT_SHADER
 	};

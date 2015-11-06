@@ -44,6 +44,7 @@ public:
 
 private:
 	GLFWwindow *m_wnd;
+	GLsizei m_width, m_height;
 
 	std::unique_ptr<ShadowMap> m_pShadowMap;
 
@@ -73,7 +74,7 @@ private:
 	void render();
 	void idle();
 
-	void calcProjection(int width, int height);
+	void calcProjection();
 
 	void onMouseCursorPos(double xpos, double ypos);
 	void onFrameBufferSize(int width, int height);

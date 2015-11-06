@@ -89,6 +89,8 @@ void WoodPlane::draw(bool bUseMaterial) const
 	if (bUseMaterial)
 		m_material.apply();
 
+	glDisable(GL_CULL_FACE);
+
 	glBindVertexArray(m_vao);
 	glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices) / strides);
 	glBindVertexArray(0);

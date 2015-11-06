@@ -95,7 +95,7 @@ vec3 calcPointLight(int idx);
 vec3 calcSpotLight();
 
 vec3 calcBlinnPhong(vec3 lightDir, vec3 ambientLight, vec3 diffuseLight, vec3 specularLight);
-float calcShadow();
+float calcShadow(vec3 lightDir, vec3 normal);
 
 void main()
 {
@@ -161,11 +161,11 @@ vec3 calcBlinnPhong(vec3 lightDir, vec3 ambientLight, vec3 diffuseLight, vec3 sp
 	float spec = pow(max(dot(norm, halfwayDir), 0.0f), material.shininess);
 	vec3 specular = spec * specmap * specularLight;
 
-	float shadow = calcShadow();
+	float shadow = calcShadow(lightDir, norm);
 	return ambient + (1.0f - shadow) * (diffuse + specular);
 }
 
-float calcShadow()
+float calcShadow(vec3 lightDir, vec3 normal)
 {
 	vec3 projCoord = vs_out.fragPosLightSpace.xyz / vs_out.fragPosLightSpace.w;
 
@@ -175,5 +175,8 @@ float calcShadow()
 	float closestDepth = texture(shadowDepthMap, projCoord.xy).r;
 	float currentDepth = projCoord.z;
 
-	return currentDepth > closestDepth ? 1.0f : 0.0f;
+	float bias = 0.05f * max(1.0f - dot(normal, lightDir), 0.1f);
+	float shadow = ((currentDepth - bias) > closestDepth ? 1.0f : 0.0f);
+
+	return shadow;
 }

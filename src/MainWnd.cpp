@@ -47,6 +47,7 @@ std::unique_ptr<MainWnd> MainWnd::createInstance()
 
 MainWnd::MainWnd()
 	: m_wnd(nullptr)
+	, m_width(MAINWND_WIDTH), m_height(MAINWND_HEIGHT)
 {
 	// TODO Auto-generated constructor stub
 }
@@ -185,9 +186,11 @@ bool MainWnd::initialize()
 
 		int width, height;
 		glfwGetFramebufferSize(m_wnd, &width, &height);
+		m_width = static_cast<GLsizei>(width);
+		m_height = static_cast<GLsizei>(height);
 
-		glViewport(0, 0, static_cast<GLsizei>(width), static_cast<GLsizei>(height));
-		calcProjection(width, height);
+		glViewport(0, 0, m_width, m_height);
+		calcProjection();
 
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_FRAMEBUFFER_SRGB);
@@ -213,11 +216,7 @@ bool MainWnd::initialize()
 
 void MainWnd::render()
 {
-	int width, height;
-	glfwGetFramebufferSize(m_wnd, &width, &height);
-
-	m_pShadowMap->renderScene(m_pScene.get(), m_projection, m_camera.getMatrix(),
-		static_cast<GLsizei>(width), static_cast<GLsizei>(height));
+	m_pShadowMap->renderScene(m_pScene.get(), m_projection, m_camera.getMatrix(), m_width, m_height);
 
 	glfwSwapBuffers(m_wnd);
 }
@@ -235,15 +234,9 @@ void MainWnd::idle()
 	m_camera.move(front, right, unit * m_deltaTime);
 }
 
-void MainWnd::calcProjection(int width, int height)
+void MainWnd::calcProjection()
 {
-	float aspect;
-
-	// 최소화 상태일땐 width == height == 0임.
-	if (width == 0 || height == 0)
-		aspect = 1.0f;
-	else
-		aspect = (float)width / height;
+	float aspect = static_cast<float>(m_width) / m_height;
 
 	m_projection = glm::perspective(glm::radians(45.0f), aspect, 0.1f, 100.0f);
 }
@@ -258,30 +251,25 @@ void MainWnd::onMouseCursorPos(double xpos, double ypos)
 	}
 	else
 	{
-		int width, height;
-		glfwGetFramebufferSize(m_wnd, &width, &height);
-		if (!(width == 0 || height == 0))
-		{
-			const float maxPitch = glm::radians(75.0f);
+		const float maxPitch = glm::radians(75.0f);
 
-			const float unit = glm::radians(60.0f);
+		const float unit = glm::radians(60.0f);
 
-			float dx = (float)xpos - m_prevMouseX;
-			float dy = -((float)ypos - m_prevMouseY);
+		float dx = (float)xpos - m_prevMouseX;
+		float dy = -((float)ypos - m_prevMouseY);
 
-			float pitch = m_camera.getPitch() + (dy / height) * unit;
-			float yaw = m_camera.getYaw() + (dx / width) * unit;
+		float pitch = m_camera.getPitch() + (dy / m_height) * unit;
+		float yaw = m_camera.getYaw() + (dx / m_width) * unit;
 
-			if (pitch > maxPitch)
-				pitch = maxPitch;
-			else if (pitch < -maxPitch)
-				pitch = -maxPitch;
+		if (pitch > maxPitch)
+			pitch = maxPitch;
+		else if (pitch < -maxPitch)
+			pitch = -maxPitch;
 
-			m_camera.setPitchYaw(pitch, yaw);
+		m_camera.setPitchYaw(pitch, yaw);
 
-			m_prevMouseX = (float)xpos;
-			m_prevMouseY = (float)ypos;
-		}
+		m_prevMouseX = (float)xpos;
+		m_prevMouseY = (float)ypos;
 	}
 }
 
@@ -290,8 +278,11 @@ void MainWnd::onFrameBufferSize(int width, int height)
 	// 최소화 상태일땐 width == height == 0임.
 	if (!(width == 0 || height == 0))
 	{
+		m_width = static_cast<GLsizei>(width);
+		m_height = static_cast<GLsizei>(height);
+
 		glViewport(0, 0, width, height);
-		calcProjection(width, height);
+		calcProjection();
 	}
 }
 

@@ -47,7 +47,6 @@ private:
 public:
 	ShadowMap();
 
-	void calcProjection(float fovy, float aspect, float zNear, float zFar);
 	void renderScene(Scene *pScene, const glm::mat4 &projMatrix, const glm::mat4 &viewMatrix,
 		GLsizei viewportWidth, GLsizei viewportHeight) const;
 };

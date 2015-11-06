@@ -62,49 +62,7 @@ ShadowMap::ShadowMap()
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	m_lightView = glm::lookAt({ -2.0f, 4.0f, -1.0f }, glm::vec3(0.0f), glm::vec3(1.0f));
-}
-
-void ShadowMap::calcProjection(float fovy, float aspect, float zNear, float zFar)
-{
-	float y = zFar * std::tan(fovy / 2);
-	float x = aspect * y;
-	m_lightProjection = glm::ortho(-x, x, -y, y, zNear, zFar);
-	//m_lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 1.0f, 7.5f);
-}
-
-namespace
-{
-	GLuint quadVAO = 0, quadVBO;
-	void drawQuad()
-	{
-		if (quadVAO == 0)
-		{
-			GLfloat vertices[] = {
-				// position, texture
-				-1.0f, 1.0f, 0.0f,	0.0f, 1.0f,
-				-1.0f, -1.0f, 0.0f,	0.0f, 0.0f,
-				1.0f, 1.0f, 0.0f,	1.0f, 1.0f,
-				1.0f, -1.0f, 0.0f,	1.0f, 0.0f,
-			};
-			glGenVertexArrays(1, &quadVAO);
-			glGenBuffers(1, &quadVBO);
-			glBindVertexArray(quadVAO);
-			{
-				glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
-				glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-				glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid *)0);
-				glEnableVertexAttribArray(0);
-				glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid *)(3 * sizeof(GLfloat)));
-				glEnableVertexAttribArray(1);
-				glBindBuffer(GL_ARRAY_BUFFER, 0);
-			}
-			glBindVertexArray(0);
-		}
-
-		glBindVertexArray(quadVAO);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-		glBindVertexArray(0);
-	}
+	m_lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 1.0f, 7.5f);
 }
 
 void ShadowMap::renderScene(Scene *pScene, const glm::mat4 &projMatrix, const glm::mat4 &viewMatrix,
@@ -113,7 +71,6 @@ void ShadowMap::renderScene(Scene *pScene, const glm::mat4 &projMatrix, const gl
 	ShaderManager &sm = ShaderManager::getInstance();
 	Shader &shadowShader = sm.getShader(ShaderManager::SHADOW);
 	Shader &shadowDepthShader = sm.getShader(ShaderManager::SHADOW_DEPTH);
-	Shader &shadowDebugShader = sm.getShader(ShaderManager::SHADOW_DEBUG);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, m_depthMapFBO);
 	{
@@ -128,31 +85,12 @@ void ShadowMap::renderScene(Scene *pScene, const glm::mat4 &projMatrix, const gl
 	glViewport(0, 0, viewportWidth, viewportHeight);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	static bool bShowDebug = false;
-	if (bShowDebug)
-	{
-		shadowDebugShader.use();
-		Texture::bind(0, &m_depthMap);
-		shadowDebugShader.setUniform1i("depthMap", 0);
-		drawQuad();
-		Texture::bind(0, nullptr);
-	}
-	else
-	{
-		shadowShader.use();
-		shadowShader.setUniformMatrix4f("lightSpaceMatrix", m_lightProjection * m_lightView);
-		LightManager::getInstance().apply(viewMatrix);
+	shadowShader.use();
+	shadowShader.setUniformMatrix4f("lightSpaceMatrix", m_lightProjection * m_lightView);
+	LightManager::getInstance().apply(viewMatrix);
 
-		Texture::bind(5, &m_depthMap);
-		shadowShader.setUniform1i("shadowDepthMap", 5);
-		pScene->render(projMatrix, viewMatrix, false);
-		Texture::bind(5, nullptr);
-	}
-
-	static int count = 0;
-	if (++count >= 1000)
-	{
-		count = 0;
-		bShowDebug = !bShowDebug;
-	}
+	Texture::bind(5, &m_depthMap);
+	shadowShader.setUniform1i("shadowDepthMap", 5);
+	pScene->render(projMatrix, viewMatrix, false);
+	Texture::bind(5, nullptr);
 }

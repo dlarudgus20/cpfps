@@ -41,10 +41,10 @@ LightManager &LightManager::getInstance()
 
 void LightManager::initialize()
 {
-	//m_dirLight.setDirection({ -2.0f, -1.0f, -1.2f });
-	//m_dirLight.setAmbient({ 0.1f, 0.1f, 0.1f });
-	//m_dirLight.setDiffuse({ 1.0f, 1.0f, 1.0f });
-	//m_dirLight.setSpecular({ 1.0f, 1.0f, 1.0f });
+	m_dirLight.setDirection({ 2.0f, -4.0f, 1.0f });
+	m_dirLight.setAmbient(glm::vec3(0.2f));
+	m_dirLight.setDiffuse(glm::vec3(1.0f));
+	m_dirLight.setSpecular(glm::vec3(1.0f));
 
 	//glm::vec3 ptLightPositions[] = {
 	//	{ 2.3f, -3.3f, -4.0f },
@@ -61,11 +61,11 @@ void LightManager::initialize()
 		//m_ptLights[i].setSpecular({ 1.0f, 1.0f, 1.0f });
 		//m_ptLights[i].setAttenuation(1.0f, 0.14f * 0.4, 0.07f * 0.4);
 	}
-	m_ptLights[0].setPosition({ -2.0f, 4.0f, -1.0f });
-	m_ptLights[0].setAmbient(glm::vec3(0.2f));
-	m_ptLights[0].setDiffuse(glm::vec3(1.0f));
-	m_ptLights[0].setSpecular(glm::vec3(1.0f));
-	m_ptLights[0].setAttenuation(1.0f, 0.0f, 0.0f);
+	//m_ptLights[0].setPosition({ -2.0f, 4.0f, -1.0f });
+	//m_ptLights[0].setAmbient(glm::vec3(0.2f));
+	//m_ptLights[0].setDiffuse(glm::vec3(1.0f));
+	//m_ptLights[0].setSpecular(glm::vec3(1.0f));
+	//m_ptLights[0].setAttenuation(1.0f, 0.0f, 0.0f);
 
 	//m_spLight.setPosition({ 2.3f, -3.3f, -4.0f });
 	//m_spLight.setDirection({ -2.3f, 3.3f, 4.0f });

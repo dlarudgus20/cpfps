@@ -57,7 +57,6 @@ void ShaderManager::initialize()
 	{
 		doCompile(m_arShader[SHADOW], "shaders/shadow.vs", "shaders/shadow.fs", "shadow");
 		doCompile(m_arShader[SHADOW_DEPTH], "shaders/shadow_depth.vs", "shaders/shadow_depth.fs", "shadow_depth");
-		doCompile(m_arShader[SHADOW_DEBUG], "shaders/shadow_debug.vs", "shaders/shadow_debug.fs", "shadow_debug");
 	}
 	catch (Shader::CompileError &e)
 	{
